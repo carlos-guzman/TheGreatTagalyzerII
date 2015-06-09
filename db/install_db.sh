@@ -9,7 +9,8 @@ if [ $# -gt 0 ]; then
       sql_file=remove_scalica.sql
       ;;
     *)
-      echo "unknown"
+      echo "unknown command: $1"
+      exit 1
   esac
 fi
 
