@@ -8,7 +8,6 @@ from django.conf import settings
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('auth', '0006_require_contenttypes_0002'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
@@ -16,16 +15,17 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Following',
             fields=[
-                ('follower', models.ForeignKey(related_name='user_follows', primary_key=True, serialize=False, to=settings.AUTH_USER_MODEL)),
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('follow_date', models.DateTimeField(verbose_name=b'follow data')),
                 ('followee', models.ForeignKey(related_name='user_followed', to=settings.AUTH_USER_MODEL)),
+                ('follower', models.ForeignKey(related_name='user_follows', to=settings.AUTH_USER_MODEL)),
             ],
         ),
         migrations.CreateModel(
             name='Post',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('text', models.CharField(max_length=256)),
+                ('text', models.CharField(default=b'blah', max_length=256)),
                 ('pub_date', models.DateTimeField(verbose_name=b'date_posted')),
                 ('user', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
             ],
