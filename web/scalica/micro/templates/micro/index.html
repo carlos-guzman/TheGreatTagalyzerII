@@ -1,0 +1,9 @@
+{% if follows_list %}
+  <ul>
+    {% for user in follows_list %}
+      <li><a href="/micro/{{ user.id }}/">{{ user.username }}</a></li>
+    {% endfor %}
+  </ul>
+{% else %}
+  <p>No users are available.</p>
+{% endif %}
