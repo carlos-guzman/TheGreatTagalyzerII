@@ -2,7 +2,7 @@ from django.contrib.auth.models import User
 from django.db import models
 
 # Create your models here.
-# Take the users Table from https://docs.djangoproject.com/en/1.8/topics/auth/default/
+
 class Post(models.Model):
   user = models.ForeignKey(User)
   text = models.CharField(max_length=256, default="blah")
@@ -11,7 +11,7 @@ class Post(models.Model):
     if len(self.text) < 16:
       desc = self.text
     else:
-      desc = textself.text[0:16]
+      desc = self.text[0:16]
     return self.user.username + ':' + desc
 
 class Following(models.Model):

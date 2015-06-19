@@ -1,9 +1,12 @@
-{% if follows_list %}
+{% load staticfiles %}
+<link rel="stylesheet" type="text/css" href="{% static 'micro/style.css' %}" />
+{% if post_list %}
   <ul>
-    {% for user in follows_list %}
-      <li><a href="/micro/{{ user.id }}/">{{ user.username }}</a></li>
+    {% for post in post_list %}
+      <li><a href="{% url 'micro:stream' post.user_id %}">{{ post }}</a></li>
     {% endfor %}
   </ul>
 {% else %}
-  <p>No users are available.</p>
+  <p>No posts are available.</p>
 {% endif %}
+<a href="{% url 'micro:logout' %}">Log Out</a>

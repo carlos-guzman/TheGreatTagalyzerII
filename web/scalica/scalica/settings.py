@@ -27,17 +27,18 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+LOGIN_URL = '/micro/login/'
 
 # Application definition
 
 INSTALLED_APPS = (
+    'micro', # Keep this first, so templates are first found in this app.
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'micro',
 )
 
 MIDDLEWARE_CLASSES = (
