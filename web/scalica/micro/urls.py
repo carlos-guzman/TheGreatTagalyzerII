@@ -5,6 +5,8 @@ from django.contrib.auth import views as auth_views
 
 urlpatterns = [
     url(r'^$', views.index, name='index'),
-    url(r'^(?P<user_id>[0-9]+)/$', views.stream, name='stream'),
+    url(r'^stream/(?P<user_id>[0-9]+)/$', views.stream, name='stream'),
+    url(r'^post/$', views.post, name='post'),
+    url(r'^follow/$', views.follow, name='follow'),
     url('^', include('django.contrib.auth.urls'))
 ]

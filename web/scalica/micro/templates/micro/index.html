@@ -1,5 +1,5 @@
-{% load staticfiles %}
-<link rel="stylesheet" type="text/css" href="{% static 'micro/style.css' %}" />
+{% extends "micro/base.html" %}
+{% block content %}
 {% if post_list %}
   <ul>
     {% for post in post_list %}
@@ -9,4 +9,4 @@
 {% else %}
   <p>No posts are available.</p>
 {% endif %}
-<a href="{% url 'micro:logout' %}">Log Out</a>
+{% endblock %}

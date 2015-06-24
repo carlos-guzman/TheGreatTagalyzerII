@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.http import HttpResponse
 from django.shortcuts import render
-from .models import Following, Post
+from .models import Following, Post, FollowingForm, PostForm
 
 # Create your views here.
 
@@ -38,9 +38,17 @@ def home(request):
 # Transitions {home,logout}
 @login_required
 def post(request):
-    return HttpResponse("TODO: Add post page")
+    if request.method == 'POST':
+        return HttpResponse("TODO: Save Post.")
+    else:
+        form = PostForm
+    return render(request, 'micro/post.html', {'form' : form})
 
 # Transitions {stream,home,logout}
 @login_required
 def follow(request):
-    return HttpResponse("TODO: Add follow page")
+    if request.method == 'POST':
+        return HttpResponse("TODO: Save Follow relation.")
+    else:
+        form = FollowingForm
+    return render(request, 'micro/follow.html', {'form' : form})
