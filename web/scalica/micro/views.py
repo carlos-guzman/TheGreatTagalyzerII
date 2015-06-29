@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.http import HttpResponse
 from django.shortcuts import render
+from django.utils import timezone
 from .models import Following, Post, FollowingForm, PostForm
 
 # Create your views here.
@@ -39,7 +40,12 @@ def home(request):
 @login_required
 def post(request):
     if request.method == 'POST':
-        return HttpResponse("TODO: Save Post.")
+        form = PostForm(request.POST)
+        new_post = form.save(commit=False)
+        new_post.user_id = request.user.id
+        new_post.pub_date = timezone.now()
+        new_post.save()
+        return HttpResponse("TODO: Post Saved")
     else:
         form = PostForm
     return render(request, 'micro/post.html', {'form' : form})
