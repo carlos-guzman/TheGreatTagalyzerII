@@ -1,3 +1,13 @@
+#headbar { 
+  background-color: #5F9EA0;
+  text-align: right;
+}
+
+#footbar { 
+  background-color: #5F9EA0;
+  text-align: right;
+}
+
 body {
   /* background: white url("images/background.gif") no-repeat right bottom; */
 }

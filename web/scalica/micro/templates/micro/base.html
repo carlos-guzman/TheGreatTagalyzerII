@@ -1,12 +1,24 @@
 <!DOCTYPE html>
 {% load staticfiles %}
 <html>
-  <head>
-    <link rel="stylesheet" type="text/css" href="{% static 'micro/style.css' %}" />
-    <title>Scalica</title>
-  </head> 
-  <body>
-    {% block content %}{% endblock content %}
-  <a href="{% url 'micro:logout' %}">Log Out</a>
-  </body>
+<head>
+  <link rel="stylesheet" type="text/css" href="{% static 'micro/style.css' %}" />
+  <title>Scalica</title>
+</head> 
+<body>
+  <div id="headbar">
+  {% block header %}
+      {% if user.is_authenticated %}
+        {{ user.username }}
+        <a href="{% url 'micro:logout' %}">Log Out</a>
+      {% else %}
+        <a href="{% url 'micro:login' %}">Log In</a>
+      {% endif %}
+    {% endblock header %}
+  </div>
+  {% block content %}{% endblock content %}
+  <div id="footbar">
+    {% block footer %}<p>Copyright</p>{% endblock footer %}
+  </div>
+</body>
 </html>
