@@ -1,9 +1,16 @@
 {% extends "micro/base.html" %}
+{% load humanize %}
 {% block content %}
 {% if post_list %}
   <ul>
     {% for post in post_list %}
-      <li><a href="{% url 'micro:stream' post.user_id %}">{{ post }}</a></li>
+      <li>
+      {{ post.text }} by
+      <a href="{% url 'micro:stream' post.user.id %}">
+        {{ post.user.username }}
+      </a>
+        ({{ post.pub_date|naturaltime }})
+      </li>
     {% endfor %}
   </ul>
 {% else %}
