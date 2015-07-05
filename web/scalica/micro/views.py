@@ -21,8 +21,10 @@ def anon_home(request):
   return render(request, 'micro/public.html')
 
 def stream(request, user_id):
+  # TODO: Check is authenticated. If so, check it stream user is followed
+  # if not add a follow button.
   user = User.objects.get(pk=user_id)
-  post_list = Post.objects.filter(user_id=user_id)
+  post_list = Post.objects.filter(user_id=user_id).order_by('-pub_date')
   paginator = Paginator(post_list, 10)
   page = request.GET.get('page')
   try:
@@ -49,10 +51,16 @@ def register(request):
 def home(request):
   '''List of recent posts by people I follow'''
   #TODO: See if can replace with a django join. 
+  my_post = Post.objects.filter(user=request.user).order_by('-pub_date')[0]
   follows = [o.followee_id for o in Following.objects.filter(
     follower_id=request.user.id)]
-  post_list = Post.objects.filter(user_id__in=follows)
-  context = {'post_list': post_list}
+  post_list = Post.objects.filter(
+      user_id__in=follows).order_by('-pub_date')[0:10]
+  context = {
+    'post_list': post_list,
+    'my_post' : my_post,
+    'post_form' : PostForm
+  }
   return render(request, 'micro/index.html', context)
 
 # Allows to post something and shows my most recent posts.

@@ -6,7 +6,7 @@
   <title>Scalica</title>
 </head> 
 <body>
-  <div id="headbar">
+  <div id="header">
   {% block header %}
       {% if user.is_authenticated %}
         {{ user.username }}
@@ -16,8 +16,13 @@
       {% endif %}
     {% endblock header %}
   </div>
+  <div id="nav">
+  {% block nav %}{% endblock nav %}
+  </div>
+  <div id="content">
   {% block content %}{% endblock content %}
-  <div id="footbar">
+  </div>
+  <div id="footer">
     {% block footer %}<p>Copyright</p>{% endblock footer %}
   </div>
 </body>
