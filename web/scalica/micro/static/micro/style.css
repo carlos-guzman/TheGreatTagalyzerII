@@ -4,13 +4,14 @@
     text-align:right;
     padding:5px;
 }
-#nav {
+#sidebar {
     line-height:30px;
     background-color:#eeeeee;
-    height:300px;
-    width:100px;
+    height:600px;
+    width:128px;
     float:left;
     padding:5px; 
+    text-align:center;
 }
 #content {
     width:350px;

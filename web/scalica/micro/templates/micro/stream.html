@@ -1,9 +1,11 @@
 {% extends "micro/base.html" %}
 {% load humanize %}
 {% load staticfiles %}
-{% block content %}
+{% block sidebar %}
 <img src="{% static "micro/images/user.png" %}" alt="Generic User"/> <br>
-{{ stream_user.username }} <br>
+{{ stream_user.username }}
+{% endblock %}
+{% block content %}
 {% for post in posts %}
   <li>
     {{ post.text }} ({{ post.pub_date|naturaltime }})
