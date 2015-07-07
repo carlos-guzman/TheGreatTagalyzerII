@@ -61,7 +61,7 @@ def home(request):
     'my_post' : my_post,
     'post_form' : PostForm
   }
-  return render(request, 'micro/index.html', context)
+  return render(request, 'micro/home.html', context)
 
 # Allows to post something and shows my most recent posts.
 # Transitions {home,logout}
