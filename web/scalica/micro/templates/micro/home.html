@@ -7,7 +7,9 @@
 {% endblock %}
 {% block content %}
 <div id="status">
+{% if my_post %}
  {{ my_post.text }} ({{ my_post.pub_date|naturaltime }})
+{% endif %}
 </div>
 <div id="post">
   <form action="/micro/post/" method="post">

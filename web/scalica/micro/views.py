@@ -5,12 +5,11 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.utils import timezone
-from .models import Following, Post, FollowingForm, PostForm
+from .models import Following, Post, FollowingForm, PostForm, UserForm
 
-# Create your views here.
 
-# Views requiring authentication
-# Transitions {login}
+# Anonymous views
+#################
 def index(request):
   if request.user.is_authenticated():
     return home(request)
@@ -42,16 +41,26 @@ def stream(request, user_id):
   return render(request, 'micro/stream.html', context)
 
 def register(request):
-  return HttpResponse("TODO: Add register user page")
+  if request.method == 'POST':
+    form = UserForm(request.POST)
+    new_user = form.save(commit=False)
+    new_user.save()
+    return home(request)
+  else:
+    form = UserForm
+  return render(request, 'micro/register.html', {'form' : form})
 
-# Logged-in operation
-
-# Transitions {stream,post,follow,logout}
+# Authenticated views
+#####################
 @login_required
 def home(request):
   '''List of recent posts by people I follow'''
   #TODO: See if can replace with a django join. 
-  my_post = Post.objects.filter(user=request.user).order_by('-pub_date')[0]
+  my_posts = Post.objects.filter(user=request.user).order_by('-pub_date')
+  if my_posts:
+    my_post = my_posts[0]
+  else:
+    my_post = None
   follows = [o.followee_id for o in Following.objects.filter(
     follower_id=request.user.id)]
   post_list = Post.objects.filter(
@@ -64,7 +73,6 @@ def home(request):
   return render(request, 'micro/home.html', context)
 
 # Allows to post something and shows my most recent posts.
-# Transitions {home,logout}
 @login_required
 def post(request):
   if request.method == 'POST':
@@ -78,7 +86,6 @@ def post(request):
     form = PostForm
   return render(request, 'micro/post.html', {'form' : form})
 
-# Transitions {stream,home,logout}
 @login_required
 def follow(request):
   if request.method == 'POST':
