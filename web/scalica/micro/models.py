@@ -34,8 +34,3 @@ class FollowingForm(ModelForm):
   class Meta:
     model = Following
     fields = ['followee']
-
-class UserForm(ModelForm):
-  class Meta:
-    model = User
-    fields = '__all__'

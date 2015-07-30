@@ -1,11 +1,12 @@
-from django.contrib.auth import logout
+from django.contrib.auth import logout, login, authenticate
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from django.contrib.auth.forms import UserCreationForm
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.utils import timezone
-from .models import Following, Post, FollowingForm, PostForm, UserForm
+from .models import Following, Post, FollowingForm, PostForm
 
 
 # Anonymous views
@@ -42,12 +43,19 @@ def stream(request, user_id):
 
 def register(request):
   if request.method == 'POST':
-    form = UserForm(request.POST)
-    new_user = form.save(commit=False)
-    new_user.save()
+    form = UserCreationForm(request.POST)
+    new_user = form.save(commit=True)
+    # Log in that user.
+    user = authenticate(username=new_user.username,
+                        password=form.clean_password2())
+    print new_user.username, new_user.password
+    if user is not None:
+      login(request, user)
+    else:
+      raise Exception
     return home(request)
   else:
-    form = UserForm
+    form = UserCreationForm
   return render(request, 'micro/register.html', {'form' : form})
 
 # Authenticated views

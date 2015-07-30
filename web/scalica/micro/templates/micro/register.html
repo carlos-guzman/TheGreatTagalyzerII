@@ -1,8 +1,8 @@
 {% extends "micro/base.html" %}
 {% block content %}
-<form action="/micro/follow/" method="post">
+<form action="/micro/register/" method="post">
   {% csrf_token %}
-  {{ form }}
+  {{ form.as_p }}
   <input type="submit" value="Submit" />
 </form>
 {% endblock %}
