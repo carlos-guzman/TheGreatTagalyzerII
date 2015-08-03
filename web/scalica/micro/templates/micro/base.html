@@ -7,23 +7,23 @@
 </head> 
 <body>
   <div id="header">
-  {% block header %}
-      {% if user.is_authenticated %}
-        {{ user.username }}
-        <a href="{% url 'micro:logout' %}">Log Out</a>
-      {% else %}
-        <a href="{% url 'micro:login' %}">Log In</a>
-      {% endif %}
-    {% endblock header %}
+    {% if user.is_authenticated %}
+      {{ user.username }}
+      <a href="{% url 'micro:logout' %}">Log Out</a>
+    {% else %}
+      <a href="{% url 'micro:login' %}">Log In</a>
+    {% endif %}
+    {% block header %}{% endblock header %}
   </div>
   <div id="sidebar">
-  {% block sidebar %}{% endblock sidebar %}
+    {% block sidebar %}{% endblock sidebar %}
   </div>
   <div id="content">
-  {% block content %}{% endblock content %}
+    {% block content %}{% endblock content %}
   </div>
   <div id="footer">
-    {% block footer %}<p>Copyright Scalica</p>{% endblock footer %}
+    <p>Copyright Scalica</p>
+    {% block footer %}{% endblock footer %}
   </div>
 </body>
 </html>
