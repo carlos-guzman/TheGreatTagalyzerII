@@ -16,6 +16,7 @@ virtualenv --system-site-packages .
 
 source ./bin/activate
 pip install Django==1.8
+pip install django-debug-toolbar==1.3.2
 echo "To activate run:"
 echo "\$ ./bin/activate"
 echo "To deactivate run:"
