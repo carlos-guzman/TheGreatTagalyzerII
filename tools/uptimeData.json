@@ -1,0 +1,10 @@
+{
+  "cols": [
+        {"id":"A","label":"Date","type":"date"},
+        {"id":"B","label":"Ping","type":"number"}
+      ],
+  "rows": [
+        {"c":[{"v":new Date(2314, 2, 15),"f":null},{"v":12400,"f":null}]},
+        {"c":[{"v":new Date(2314, 2, 16),"f":null},{"v":24045,"f":null}]}
+      ]
+}
