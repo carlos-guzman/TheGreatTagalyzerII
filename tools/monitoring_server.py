@@ -27,8 +27,9 @@ HTML = """
           async: false
           }).responseText;
           
+      var evalledData = eval("("+jsonData+")");
       // Create our data table out of JSON data loaded from server.
-      var data = new google.visualization.DataTable(jsonData);
+      var data = new google.visualization.DataTable(evalledData);
 
       // Instantiate and draw our chart, passing in some options. 
       var chart = new google.visualization.AnnotationChart(document.getElementById('chart_div'));
