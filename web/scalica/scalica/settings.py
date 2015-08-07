@@ -111,7 +111,7 @@ DATABASES = {
     }
 }
 
-DATABASE_ROUTERS = ['micro.routers.UserRouter']
+#DATABASE_ROUTERS = ['micro.routers.UserRouter']
 
 
 # Internationalization

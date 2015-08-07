@@ -7,7 +7,7 @@ from django.http import HttpResponse
 from django.shortcuts import render
 from django.utils import timezone
 from .models import Following, Post, FollowingForm, PostForm
-from utils.hints import hint_for_user
+#from utils.hints import hint_for_user
 
 
 # Anonymous views
