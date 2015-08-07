@@ -7,6 +7,7 @@ from django.http import HttpResponse
 from django.shortcuts import render
 from django.utils import timezone
 from .models import Following, Post, FollowingForm, PostForm
+from utils.hints import hint_for_user
 
 
 # Anonymous views
@@ -25,6 +26,7 @@ def stream(request, user_id):
   # if not add a follow button.
   user = User.objects.get(pk=user_id)
   post_list = Post.objects.filter(user_id=user_id).order_by('-pub_date')
+  # hint_for_user(post_list, user_id)
   paginator = Paginator(post_list, 10)
   page = request.GET.get('page')
   try:
@@ -97,8 +99,12 @@ def post(request):
 @login_required
 def follow(request):
   if request.method == 'POST':
-    # Use pagination to show the list of the people that you follow.
-    return follow(request)
+    form = FollowingForm(request.POST)
+    new_follow = form.save(commit=False)
+    new_follow.follower = request.user
+    new_follow.follow_date = timezone.now()
+    new_follow.save()
+    return home(request)
   else:
     form = FollowingForm
   return render(request, 'micro/follow.html', {'form' : form})
