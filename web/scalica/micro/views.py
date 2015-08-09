@@ -21,9 +21,15 @@ def index(request):
 def anon_home(request):
   return render(request, 'micro/public.html')
 
-def stream(request, user_id):
-  # TODO: Check is authenticated. If so, check it stream user is followed
-  # if not add a follow button.
+def stream(request, user_id):  
+  # See if to present a 'follow' button
+  form = None
+  if request.user.is_authenticated() and request.user.id != int(user_id):
+    try:
+      f = Following.objects.get(follower_id=request.user.id,
+                                followee_id=user_id)
+    except Following.DoesNotExist:
+      form = FollowingForm
   user = User.objects.get(pk=user_id)
   post_list = Post.objects.filter(user_id=user_id).order_by('-pub_date')
   # hint_for_user(post_list, user_id)
@@ -40,6 +46,7 @@ def stream(request, user_id):
   context = {
     'posts' : posts,
     'stream_user' : user,
+    'form' : form,
   }
   return render(request, 'micro/stream.html', context)
 
