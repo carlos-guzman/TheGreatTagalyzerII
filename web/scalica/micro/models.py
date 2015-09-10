@@ -24,12 +24,13 @@ class Following(models.Model):
   def __str__(self):
     return self.follower.username + "->" + self.followee.username
 
+# Model Forms
 class PostForm(ModelForm):
   class Meta:
     model = Post
     fields = ('text',)
     widgets = {
-            'text': TextInput(attrs={'id' : 'input_post'}),
+      'text': TextInput(attrs={'id' : 'input_post'}),
     }
 
 class FollowingForm(ModelForm):

@@ -63,3 +63,14 @@ li a {
   box-shadow: none;
   border-radius: none;
 }
+
+div#content ul {
+  margin:10px 0;
+  padding:0px;
+  list-style-type:none;
+}
+
+div#content li {
+  margin-bottom:15px;
+  margin-left:25px;
+}

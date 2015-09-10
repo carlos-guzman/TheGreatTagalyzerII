@@ -100,8 +100,6 @@ WSGI_APPLICATION = 'scalica.wsgi.application'
 
 
 # Database
-# https://docs.djangoproject.com/en/1.8/ref/settings/#databases
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
@@ -111,11 +109,8 @@ DATABASES = {
     }
 }
 
-#DATABASE_ROUTERS = ['micro.routers.UserRouter']
-
-
-# Internationalization
-# https://docs.djangoproject.com/en/1.8/topics/i18n/
+# Database routers go here:
+# DATABASE_ROUTERS = ['micro.routers.UserRouter']
 
 LANGUAGE_CODE = 'en-us'
 
@@ -130,7 +125,6 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
-
 STATIC_URL = '/static/'
 
 # Logging

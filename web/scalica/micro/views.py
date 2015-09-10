@@ -6,7 +6,6 @@ from django.http import HttpResponse
 from django.shortcuts import render
 from django.utils import timezone
 from .models import Following, Post, FollowingForm, PostForm, MyUserCreationForm
-#from utils.hints import hint_for_user
 
 
 # Anonymous views
@@ -31,7 +30,6 @@ def stream(request, user_id):
       form = FollowingForm
   user = User.objects.get(pk=user_id)
   post_list = Post.objects.filter(user_id=user_id).order_by('-pub_date')
-  # hint_for_user(post_list, user_id)
   paginator = Paginator(post_list, 10)
   page = request.GET.get('page')
   try:
@@ -56,7 +54,6 @@ def register(request):
     # Log in that user.
     user = authenticate(username=new_user.username,
                         password=form.clean_password2())
-    print new_user.username, new_user.password
     if user is not None:
       login(request, user)
     else:
@@ -71,7 +68,6 @@ def register(request):
 @login_required
 def home(request):
   '''List of recent posts by people I follow'''
-  #TODO: See if can replace with a django join. 
   my_posts = Post.objects.filter(user=request.user).order_by('-pub_date')
   if my_posts:
     my_post = my_posts[0]
