@@ -2,6 +2,7 @@ sudo apt-get update
 sudo apt-get install gcc
 sudo apt-get install python-dev python-pip
 sudo apt-get install apache2 apache2-dev
+sudo apt-get install libmysqlclient-dev
 
 mkdir /home/ubuntu/tmp
 chmod -R 777 /home/ubuntu/tmp

@@ -101,12 +101,12 @@ WSGI_APPLICATION = 'scalica.wsgi.application'
 
 # Database
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'OPTIONS': {
-            'read_default_file': '/home/sovran/projects/nyu/depot/db/my.cnf',
-        },
-    }
+  'default': {
+    'ENGINE': 'django.db.backends.mysql',
+    'OPTIONS': {
+      'read_default_file': os.path.join(BASE_DIR, '..', '..', 'db', 'my.cnf'),
+    },
+  }
 }
 
 # Database routers go here:
