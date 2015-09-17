@@ -2,22 +2,25 @@
 # Setup an EC2 development environment (with virtual env).
 
 virtual_envs=largescale
+install_dir=/home/ubuntu/${virtual_envs}
 
-apt-get update
-apt-get install git
-apt-get install libmysqlclient-dev
+apt-get update -y
+apt-get install git -y
+apt-get install libmysqlclient-dev -y
 
 export DEBIAN_FRONTEND=noninteractive
-apt-get -q -y install mysql-server
+apt-get -q -y install mysql-server -y
 
-apt-get install python-dev python-pip
+apt-get install python-dev python-pip -y
 pip install virtualenv
 
-mkdir -p $virtual_envs
-cd $virtual_envs
-virtualenv --system-site-packages .
+mkdir -p $install_dir
+chown ubuntu:ubuntu $install_dir
+
 
 ## The rest of these steps can be executed manually on the machine.
+# cd $install_dirs
+# virtualenv --system-site-packages .
 # source ./bin/activate
 # pip install Django==1.8
 # pip install django-debug-toolbar==1.3.2
@@ -28,13 +31,14 @@ virtualenv --system-site-packages .
 # echo "\$ deactivate"
 
 ## Get the source files
-# git clone https://${gitserver}/scalica largescale
+# cd ${install_dir}
+# git clone https://${gitserver}/scalica scalica
 # git checkout single_host
 
 ## set up the database
-# cd ${virtual_envs}/scalica/db
+# cd ${install_dir}/scalica/db
 # ./install_db.sh
-# cd ${virtual_envs}/scalica/web/scalica
+# cd ${install_dir}/scalica/web/scalica
 # python manage.py migrate
 
 ## Start the dev server
