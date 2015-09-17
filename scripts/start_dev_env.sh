@@ -9,6 +9,7 @@ fi
 readonly project_name=$1
 
 set x+
+
 sudo pip install virtualenv
 mkdir $project_name
 cd $project_name
