@@ -32,8 +32,7 @@ chown ubuntu:ubuntu $install_dir
 
 ## Get the source files
 # cd ${install_dir}
-# git clone https://${gitserver}/scalica scalica
-# git checkout single_host
+# git clone http://23.236.49.28/git/scalica.git scalica
 
 ## set up the database
 # cd ${install_dir}/scalica/db
