@@ -34,7 +34,6 @@ LOGIN_REDIRECT_URL = '/micro/home/'
 
 INSTALLED_APPS = (
     'micro', # Keep this first, so templates are first found in this app.
-    'utils',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -42,7 +41,6 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.humanize',
-    'debug_toolbar',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -54,28 +52,6 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
-)
-
-DEBUG_TOOLBAR_CONFIG = {
-    'DISABLE_PANELS': [],
-    'SHOW_TOOLBAR_CALLBACK': 'utils.misc.custom_show_toolbar',
-    'SHOW_TEMPLATE_CONTEXT': True,
-}
-
-DEBUG_TOOLBAR_PANELS = (
-#    'debug_toolbar.panels.versions.VersionsPanel',
-    'debug_toolbar.panels.timer.TimerPanel',
-#    'debug_toolbar.panels.settings.SettingsPanel',
-#    'debug_toolbar.panels.headers.HeadersPanel',
-    'debug_toolbar.panels.request.RequestPanel',
-    'debug_toolbar.panels.sql.SQLPanel',
-#    'debug_toolbar.panels.templates.TemplatesPanel',
-#    'debug_toolbar.panels.staticfiles.StaticFilesPanel',
-#    'debug_toolbar.panels.cache.CachePanel',
-#    'debug_toolbar.panels.signals.SignalsPanel',
-#    'debug_toolbar.panels.logging.LoggingPanel',
-#    'debug_toolbar.panels.redirects.RedirectsPanel',
 )
 
 ROOT_URLCONF = 'scalica.urls'
