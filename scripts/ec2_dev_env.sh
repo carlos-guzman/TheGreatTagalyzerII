@@ -19,7 +19,7 @@ chown ubuntu:ubuntu $install_dir
 
 
 ## The rest of these steps can be executed manually on the machine.
-# cd $install_dirs
+# cd $install_dir
 # virtualenv --system-site-packages .
 # source ./bin/activate
 # pip install Django==1.8
@@ -39,6 +39,7 @@ chown ubuntu:ubuntu $install_dir
 # cd ${install_dir}/scalica/db
 # ./install_db.sh
 # cd ${install_dir}/scalica/web/scalica
+# python manage.py makemigrations
 # python manage.py migrate
 
 ## Start the dev server
