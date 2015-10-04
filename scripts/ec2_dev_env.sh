@@ -39,5 +39,6 @@ python manage.py makemigrations
 python manage.py migrate
 
 chown -R ubuntu:ubuntu $install_dir
+chown ubuntu:ubuntu /tmp/db.debug.log
 ## Start the dev server
 # python manage.py runserver 0.0.0.0:8000
