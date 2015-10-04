@@ -17,29 +17,27 @@ pip install virtualenv
 mkdir -p $install_dir
 chown ubuntu:ubuntu $install_dir
 
-
-## The rest of these steps can be executed manually on the machine.
-# cd $install_dir
-# virtualenv --system-site-packages .
-# source ./bin/activate
-# pip install Django==1.8
-# pip install django-debug-toolbar==1.3.2
-# pip install MySQL-python==1.2.5
-# echo "To activate run:"
-# echo "\$ ./bin/activate"
+# The rest of these steps can be executed manually on the machine.
+cd $install_dir
+virtualenv --system-site-packages .
+source ./bin/activate
+pip install Django==1.8
+pip install django-debug-toolbar==1.3.2
+pip install MySQL-python==1.2.5
 # echo "To deactivate run:"
 # echo "\$ deactivate"
 
-## Get the source files
-# cd ${install_dir}
-# git clone http://23.236.49.28/git/scalica.git scalica
+# Get the source files
+git clone http://23.236.49.28/git/scalica.git scalica
 
-## set up the database
-# cd ${install_dir}/scalica/db
-# ./install_db.sh
-# cd ${install_dir}/scalica/web/scalica
-# python manage.py makemigrations
-# python manage.py migrate
+# set up the database
+cd ${install_dir}/scalica/db
+./install_db.sh
+cd ${install_dir}/scalica/web/scalica
+python manage.py makemigrations
+python manage.py migrate
 
+chown -R ubuntu:ubuntu $install_dir
+chown ubuntu:ubuntu /tmp/db.debug.log
 ## Start the dev server
 # python manage.py runserver 0.0.0.0:8000
