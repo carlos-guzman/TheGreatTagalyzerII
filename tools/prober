@@ -1,0 +1,22 @@
+#/bin/bash
+
+if [ $# -ne 2 ]; then
+  echo "Usage: $0 <url> <output_file>"
+  exit 1
+fi
+
+readonly url=$1
+readonly o_file=$2
+readonly interval=30
+
+echo  "URL=$url" > $o_file
+while true;
+do
+  wget_output=$(wget --output-document=/dev/null $url \
+    --max-redirect=0 2>&1 | grep HTTP | cut -d' ' -f 6)
+  if [ -z "$wget_output" ]; then
+    wget_output="-1"
+  fi
+  echo `date +"%s"`",$wget_output" >> $o_file
+  sleep $interval
+done

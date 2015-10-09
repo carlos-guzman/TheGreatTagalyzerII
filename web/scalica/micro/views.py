@@ -1,13 +1,11 @@
 from django.contrib.auth import logout, login, authenticate
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from django.contrib.auth.forms import UserCreationForm
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.utils import timezone
-from .models import Following, Post, FollowingForm, PostForm
-from utils.hints import hint_for_user
+from .models import Following, Post, FollowingForm, PostForm, MyUserCreationForm
 
 
 # Anonymous views
@@ -21,12 +19,17 @@ def index(request):
 def anon_home(request):
   return render(request, 'micro/public.html')
 
-def stream(request, user_id):
-  # TODO: Check is authenticated. If so, check it stream user is followed
-  # if not add a follow button.
+def stream(request, user_id):  
+  # See if to present a 'follow' button
+  form = None
+  if request.user.is_authenticated() and request.user.id != int(user_id):
+    try:
+      f = Following.objects.get(follower_id=request.user.id,
+                                followee_id=user_id)
+    except Following.DoesNotExist:
+      form = FollowingForm
   user = User.objects.get(pk=user_id)
   post_list = Post.objects.filter(user_id=user_id).order_by('-pub_date')
-  # hint_for_user(post_list, user_id)
   paginator = Paginator(post_list, 10)
   page = request.GET.get('page')
   try:
@@ -40,24 +43,24 @@ def stream(request, user_id):
   context = {
     'posts' : posts,
     'stream_user' : user,
+    'form' : form,
   }
   return render(request, 'micro/stream.html', context)
 
 def register(request):
   if request.method == 'POST':
-    form = UserCreationForm(request.POST)
+    form = MyUserCreationForm(request.POST)
     new_user = form.save(commit=True)
     # Log in that user.
     user = authenticate(username=new_user.username,
                         password=form.clean_password2())
-    print new_user.username, new_user.password
     if user is not None:
       login(request, user)
     else:
       raise Exception
     return home(request)
   else:
-    form = UserCreationForm
+    form = MyUserCreationForm
   return render(request, 'micro/register.html', {'form' : form})
 
 # Authenticated views
@@ -65,7 +68,6 @@ def register(request):
 @login_required
 def home(request):
   '''List of recent posts by people I follow'''
-  #TODO: See if can replace with a django join. 
   my_posts = Post.objects.filter(user=request.user).order_by('-pub_date')
   if my_posts:
     my_post = my_posts[0]

@@ -1,9 +1,8 @@
+from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.conf import settings
 from django.db import models
-from django.forms import ModelForm
-
-# Create your models here.
+from django.forms import ModelForm, TextInput
 
 class Post(models.Model):
   user = models.ForeignKey(settings.AUTH_USER_MODEL)
@@ -25,12 +24,22 @@ class Following(models.Model):
   def __str__(self):
     return self.follower.username + "->" + self.followee.username
 
+# Model Forms
 class PostForm(ModelForm):
   class Meta:
     model = Post
-    fields = ['text']
+    fields = ('text',)
+    widgets = {
+      'text': TextInput(attrs={'id' : 'input_post'}),
+    }
 
 class FollowingForm(ModelForm):
   class Meta:
     model = Following
-    fields = ['followee']
+    fields = ('followee',)
+
+class MyUserCreationForm(UserCreationForm):
+  class Meta(UserCreationForm.Meta):
+    help_texts = {
+      'username' : '',
+    }

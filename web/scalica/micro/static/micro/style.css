@@ -24,7 +24,6 @@
   text-align:center;
   padding:5px; 
 }
-
 #status {
   font-size:large;
   padding:10px;
@@ -52,4 +51,36 @@ body {
 
 li a {
   color: green;
+}
+
+#input_post {
+  display: block;
+  margin: 0;
+  width: 100%;
+  font-family: sans-serif;
+  font-size: 18px;
+  appearance: none;
+  box-shadow: none;
+  border-radius: none;
+}
+
+div#content ul {
+  margin:10px 0;
+  padding:0px;
+  list-style-type:none;
+}
+
+div#content li {
+  margin-bottom:15px;
+  margin-left:25px;
+}
+
+.registerTable {
+  border-spacing: 15px;
+  width: 100%;
+}
+
+.helptext {
+  font-family: sans-serif;
+  font-size: 8px;
 }
