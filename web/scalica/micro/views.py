@@ -6,6 +6,7 @@ from django.http import HttpResponse
 from django.shortcuts import render
 from django.utils import timezone
 from .models import Following, Post, FollowingForm, PostForm, MyUserCreationForm
+from utils.hints import set_user_for_sharding
 
 
 # Anonymous views
@@ -24,12 +25,16 @@ def stream(request, user_id):
   form = None
   if request.user.is_authenticated() and request.user.id != int(user_id):
     try:
-      f = Following.objects.get(follower_id=request.user.id,
-                                followee_id=user_id)
+      following_query = Following.objects
+      set_user_for_sharding(following_query, request.user.id)
+      f = following_query.get(user_id=request.user.id, followee_id=user_id)
     except Following.DoesNotExist:
       form = FollowingForm
-  user = User.objects.get(pk=user_id)
+  user_query = User.objects
+  set_user_for_sharding(user_query, user_id)
+  user = user_query.get(pk=user_id)
   post_list = Post.objects.filter(user_id=user_id).order_by('-pub_date')
+  set_user_for_sharding(post_list, user_id)
   paginator = Paginator(post_list, 10)
   page = request.GET.get('page')
   try:
@@ -58,6 +63,7 @@ def register(request):
       login(request, user)
     else:
       raise Exception
+    # TODO: Here we will create a mirror sharded User model.
     return home(request)
   else:
     form = MyUserCreationForm
@@ -68,15 +74,20 @@ def register(request):
 @login_required
 def home(request):
   '''List of recent posts by people I follow'''
-  my_posts = Post.objects.filter(user=request.user).order_by('-pub_date')
+  my_posts = Post.objects.filter(user_id=request.user.id).order_by('-pub_date')
+  set_user_for_sharding(my_posts, request.user.id)
   if my_posts:
     my_post = my_posts[0]
   else:
     my_post = None
-  follows = [o.followee_id for o in Following.objects.filter(
-    follower_id=request.user.id)]
+  following_list =  Following.objects.filter(user_id=request.user.id)
+  set_user_for_sharding(following_list, request.user.id)
+  follows = [o.followee_id for o in following_list]
   post_list = Post.objects.filter(
-      user_id__in=follows).order_by('-pub_date')[0:10]
+    user_id__in=follows).order_by('-pub_date')[0:10]
+  # TODO: Note that this is broken: we will only get the users in the same
+  # shard. We will see how to fix this.
+  set_user_for_sharding(post_list, request.user.id)
   context = {
     'post_list': post_list,
     'my_post' : my_post,
@@ -90,7 +101,7 @@ def post(request):
   if request.method == 'POST':
     form = PostForm(request.POST)
     new_post = form.save(commit=False)
-    new_post.user = request.user
+    new_post.user_id = request.user.id
     new_post.pub_date = timezone.now()
     new_post.save()
     return home(request)
@@ -103,7 +114,7 @@ def follow(request):
   if request.method == 'POST':
     form = FollowingForm(request.POST)
     new_follow = form.save(commit=False)
-    new_follow.follower = request.user
+    new_follow.user_id = request.user.id
     new_follow.follow_date = timezone.now()
     new_follow.save()
     return home(request)

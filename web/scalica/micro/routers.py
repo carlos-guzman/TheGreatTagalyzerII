@@ -1,30 +1,61 @@
+NUM_LOGICAL_SHARDS = 16
+NUM_PHYSICAL_SHARDS = 2
 
+LOGICAL_TO_PHYSICAL = (
+  'db1', 'db2', 'db1', 'db2', 'db1', 'db2', 'db1', 'db2',
+  'db1', 'db2', 'db1', 'db2', 'db1', 'db2', 'db1', 'db2',
+)
+
+def logical_to_physical(logical):
+  if logical >= NUM_LOGICAL_SHARDS or logical < 0:
+    raise Exception("shard out of bounds %d" % logical)
+  return LOGICAL_TO_PHYSICAL[logical] 
+ 
 class UserRouter(object):
-  def _shard_num_by_user_id(self, user_id):
-    print "Reading user %d" % user_id
+  def _logical_shard_for_user(self, user_id):
+    print "Looking for shard for user %d" % user_id
+    return user_id % NUM_LOGICAL_SHARDS
 
+  def _database_of(self, user_id):
+    return logical_to_physical(self._logical_shard_for_user(user_id))
+
+  def _db_for_read_write(self, model, **hints):
+    """ """
+    # Auth reads always go to the auth sub-system
+    if model._meta.app_label == 'auth':
+      return 'auth_db'
+    # For now, sessions are stored on the auth sub-system, too.
+    if model._meta.app_label == 'sessions':
+      return 'auth_db'
+    db = None    
+    try:
+      instance = hints['instance']
+      db = self._database_of(instance.user_id)
+    except AttributeError:
+      # For the user model the key is id.
+      db = self._database_of(instance.id)
+    except KeyError:
+      try:
+        db = self._database_of(int(hints['user_id']))
+      except KeyError:
+        print "No instance in hints"
+    print "Returning", db
+    return db
+  
   def db_for_read(self, model, **hints):
     """ """
-    print model._meta.db_table
-    if model._meta.db_table == 'auth_user' or \
-       model._meta.db_table == 'micro_post':
-      # When Django does foreign key reads it may pass the User model
-      # but pass a hint which is the instance that triggered the foreign key
-      # read. However, given that all user-routed instances have user_id field
-      # set - use that.
-      try:
-        self._shard_num_by_user_id(hints['instance'].user_id)
-      except KeyError:
-        try:
-          self._shard_num_by_user_id(int(hints['user_id']))
-        except KeyError:
-          print "No instance in hints. FIXME:fail"
-    return None
+    return self._db_for_read_write(model, **hints)
   
   def db_for_write(self, model, **hints):
-    return None
+    """ """
+    return self._db_for_read_write(model, **hints)
 
   def allow_relation(self, obj1, obj2, **hints):
+    if (obj1._meta.app_label == 'auth' and obj2._meta.app_label != 'auth') or \
+      (obj1._meta.app_label != 'auth' and obj2._meta.app_label == 'auth'):
+      print "Rejecting cross-table relationship", obj1._meta.app_label, \
+        obj2._meta.app_label
+      return False
     return True
 
   def allow_migrate(self, db, app_label, model=None, **hints):
