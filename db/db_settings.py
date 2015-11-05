@@ -1,13 +1,6 @@
 # Database sepecific settings.
 DATABASES = {
-  'default': {
-#    'ENGINE': 'django.db.backends.mysql',
-#    'NAME': 'scalica',
-#    'USER': 'appserver',
-#    'PASSWORD': 'foobarzoot',
-#    'HOST': '127.0.0.1',
-#    'PORT': '3306',
-  },
+  'default': { },
   'auth_db': {
     'ENGINE': 'django.db.backends.mysql',
     'NAME': 'scalica',
