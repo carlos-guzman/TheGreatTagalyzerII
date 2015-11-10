@@ -5,7 +5,8 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.utils import timezone
-from .models import Following, Post, FollowingForm, PostForm, MyUserCreationForm
+from .models import Following, Post, ScalicaUser
+from .models import FollowingForm, PostForm, MyUserCreationForm
 from utils.hints import set_user_for_sharding
 
 
@@ -30,7 +31,7 @@ def stream(request, user_id):
       f = following_query.get(user_id=request.user.id, followee_id=user_id)
     except Following.DoesNotExist:
       form = FollowingForm
-  user_query = User.objects
+  user_query = ScalicaUser.objects
   set_user_for_sharding(user_query, user_id)
   user = user_query.get(pk=user_id)
   post_list = Post.objects.filter(user_id=user_id).order_by('-pub_date')
@@ -56,6 +57,11 @@ def register(request):
   if request.method == 'POST':
     form = MyUserCreationForm(request.POST)
     new_user = form.save(commit=True)
+    # Create a mirror sharded User model.
+    u = ScalicaUser(
+        user_id=new_user.id, username=new_user.username, 
+        first_name=new_user.first_name, last_name=new_user.last_name)
+    u.save()
     # Log in that user.
     user = authenticate(username=new_user.username,
                         password=form.clean_password2())
@@ -63,7 +69,6 @@ def register(request):
       login(request, user)
     else:
       raise Exception
-    # TODO: Here we will create a mirror sharded User model.
     return home(request)
   else:
     form = MyUserCreationForm

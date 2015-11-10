@@ -4,11 +4,18 @@ from django.conf import settings
 from django.db import models
 from django.forms import ModelForm, TextInput
 
-# Note: Until we have a mirrored user Model, all fields that were previously
+# Note: For now, all fields that were previously
 # foreign keys to the auth User, must be named user_id.
+# They CAN have ScalicaUser as a Foreign Key.
+class ScalicaUser(models.Model):
+  user_id = models.BigIntegerField(primary_key=True)
+  username = models.CharField(max_length=30, unique=True)
+  first_name = models.CharField('first name', max_length=30, blank=True)
+  last_name = models.CharField('last name', max_length=30, blank=True)
+  # User data that is non-auth-related can go here (e.g. avatar)
 
 class Post(models.Model):
-  user_id = models.BigIntegerField(null=True)
+  user_id = models.BigIntegerField(db_index=True)
   text = models.CharField(max_length=256, default="")
   pub_date = models.DateTimeField('date_posted')
   def __str__(self):
@@ -19,8 +26,8 @@ class Post(models.Model):
     return str(self.user_id) + ':' + desc
 
 class Following(models.Model):
-  user_id = models.BigIntegerField(null=True)
-  followee_id = models.BigIntegerField(null=True)
+  user_id = models.BigIntegerField(db_index=True)
+  followee_id = models.BigIntegerField(db_index=True)
   follow_date = models.DateTimeField('follow date')
   def __str__(self):
     return std(self.user_id) + "->" + str(self.followee_id)
