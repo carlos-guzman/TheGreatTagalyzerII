@@ -8,6 +8,7 @@ from django.utils import timezone
 from .models import Following, Post, ScalicaUser
 from .models import FollowingForm, PostForm, MyUserCreationForm
 from utils.hints import set_user_for_sharding
+from processor import processor
 
 
 # Anonymous views
@@ -109,6 +110,8 @@ def post(request):
     new_post.user_id = request.user.id
     new_post.pub_date = timezone.now()
     new_post.save()
+    # Make an RPC call to a backend service to process the post.
+    processor.process_post(new_post.user_id, new_post.id, new_post.text)
     return home(request)
   else:
     form = PostForm
