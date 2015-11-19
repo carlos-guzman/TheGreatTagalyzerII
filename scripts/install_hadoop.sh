@@ -1,16 +1,23 @@
 #!/bin/bash
 
-# download 
-wget http://apache.arvixe.com/hadoop/common/hadoop-2.7.1/hadoop-2.7.1.tar.gz
-tar xzvf hadoop-2.7.1.tar.gz
-cd hadoop-2.7.1
-
-# Config files
-echo "export JAVA_HOME=$JAVA_HOME" >> etc/hadoop/hadoop-env.sh
-
 core_conf=etc/hadoop/core-site.xml
 hdfs_conf=etc/hadoop/hdfs-site.xml
 maprd_conf=etc/hadoop/mapred-site.xml
+hadoop_dir=./hadoop-2.7.1
+
+# download 
+download_hadoop() {
+  wget http://apache.arvixe.com/hadoop/common/hadoop-2.7.1/hadoop-2.7.1.tar.gz
+  tar xzvf hadoop-2.7.1.tar.gz
+}
+
+if [ ! -d "$hadoop_dir" ]; then
+  download_hadoop
+fi
+cd $hadoop_dir
+
+# Config files
+echo "export JAVA_HOME=$JAVA_HOME" >> etc/hadoop/hadoop-env.sh
 
 if [ -f $core_conf ]; then
   mv ${core_conf} ${core_conf}.orig
