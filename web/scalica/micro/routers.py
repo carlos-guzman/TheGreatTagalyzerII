@@ -6,18 +6,33 @@ LOGICAL_TO_PHYSICAL = (
   'db1', 'db2', 'db1', 'db2', 'db1', 'db2', 'db1', 'db2',
 )
 
+# returns a dictionary mapping a shard to all the users in that shard
+# from user_ids.
+def bucket_users_into_shards(user_ids):
+  d = {}
+  for id in user_ids:
+    shard = logical_shard_for_user(id)
+    if not shard in d:
+      d[shard] = []
+    d[shard].append(id)
+  return d
+    
+  
+  return [str(x) for x in range(NUM_LOGICAL_SHARDS)]
+
 def logical_to_physical(logical):
   if logical >= NUM_LOGICAL_SHARDS or logical < 0:
     raise Exception("shard out of bounds %d" % logical)
   return LOGICAL_TO_PHYSICAL[logical] 
  
+def logical_shard_for_user(user_id):
+  print "Looking for shard for user %d" % user_id
+  return user_id % NUM_LOGICAL_SHARDS
+
 class UserRouter(object):
-  def _logical_shard_for_user(self, user_id):
-    print "Looking for shard for user %d" % user_id
-    return user_id % NUM_LOGICAL_SHARDS
 
   def _database_of(self, user_id):
-    return logical_to_physical(self._logical_shard_for_user(user_id))
+    return logical_to_physical(logical_shard_for_user(user_id))
 
   def _db_for_read_write(self, model, **hints):
     """ """

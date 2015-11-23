@@ -8,6 +8,7 @@ from django.utils import timezone
 from .models import Following, Post, ScalicaUser
 from .models import FollowingForm, PostForm, MyUserCreationForm
 from utils.hints import set_user_for_sharding
+from routers import bucket_users_into_shards
 from processor import processor
 
 
@@ -89,13 +90,23 @@ def home(request):
   following_list =  Following.objects.filter(user_id=request.user.id)
   set_user_for_sharding(following_list, request.user.id)
   follows = [o.followee_id for o in following_list]
-  post_list = Post.objects.filter(
-    user_id__in=follows).order_by('-pub_date')[0:10]
-  # TODO: Note that this is broken: we will only get the users in the same
-  # shard. We will see how to fix this.
-  set_user_for_sharding(post_list, request.user.id)
+  # We need to query every shard where there are users who this user follows
+  # We break the users into shards, then for each shard we annotate it with
+  # a hint for that shard, issue a query and at the end join all results.
+  # Note that this is not very efficient if users are spread accorss many
+  # shards. This is where Fan-out could help improve performance.
+  shards_to_query = bucket_users_into_shards(follows)
+  all_posts = []
+  for shard, user_ids in shards_to_query.iteritems():   
+    post_list = Post.objects.filter(
+      user_id__in=user_ids).order_by('-pub_date')[0:10]
+    set_user_for_sharding(post_list, shard)
+    # The list comprehension actually invokes the db query in the QuerySet.
+    all_posts = all_posts + [p for p in post_list]
+  # TODO: Note that all_posts still needs to be sorted by time again, because
+  # it is only ordered within each shard.
   context = {
-    'post_list': post_list,
+    'post_list': all_posts,
     'my_post' : my_post,
     'post_form' : PostForm
   }
