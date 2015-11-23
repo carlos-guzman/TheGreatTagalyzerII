@@ -1,4 +1,7 @@
 #!/bin/bash
+# This script is just an example how you can compose ec2 CLI commands
+# to avoid using the Web UI. It will probably not work, as is.
+
 
 install_ec2_cli () {
   wget http://s3.amazonaws.com/ec2-downloads/ec2-api-tools.zip

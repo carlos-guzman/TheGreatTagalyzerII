@@ -22,9 +22,3 @@ echo "To activate run:"
 echo "\$ ./bin/activate"
 echo "To deactivate run:"
 echo "\$ deactivate"
-
-## Get the source files
-# gcloud init scalica-974
-#mv scalica-974/default scalica
-#rm -rf scalica-974/
-#git checkout single_host

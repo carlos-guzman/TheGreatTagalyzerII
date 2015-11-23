@@ -1,4 +1,5 @@
 #!/bin/bash
+# This script installs and configures HDFS to run in pseudo-distributed mode.
 
 core_conf=etc/hadoop/core-site.xml
 hdfs_conf=etc/hadoop/hdfs-site.xml
