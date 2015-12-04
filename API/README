@@ -2,4 +2,7 @@ To build:
 mvn package
 
 To migrate:
-java -jar target
+java -jar target/<jarname>.jar db migrate config/<ymlname>.yml
+
+To run:
+java -jar target/<jarname>.jar server config/<ymlname>.yml
