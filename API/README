@@ -1,0 +1,5 @@
+To build:
+mvn package
+
+To migrate:
+java -jar target
