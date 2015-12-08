@@ -14,5 +14,52 @@
             <column name="name" type="Text"> <constraints nullable="false" /> </column>
         </createTable>
     </changeSet>
-    
+    <changeSet id="0" author="carlos-guzman">
+        <dropTable tableName="tests"/>
+        <createTable tableName="posts">
+            <column name="id" type="int">
+                <constraints primaryKey="true" /> </column>
+            <column name="client_id" type="text">
+                <constraints nullable="false"></constraints> </column>
+            <column name="text" type="text"></column>
+            <column name="owner_id" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="sentiment_value" type="float"/>
+            <column name="inserted_at" type="timestamp" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="timestamp" defaultValue="null">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <createTable tableName="clients">
+            <column name="id" type="int">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="name" type="text">
+                <constraints nullable="false"/>
+            </column>
+            <column name="url" type="text"/>
+        </createTable>
+        <createTable tableName="hashtags">
+            <column name="id" type="int">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="tag" type="text">
+                <constraints nullable="false"/>
+            </column>
+            <column name="sentiment_value" type="float"/>
+            <column name="last_updated_at" type="timestamp" defaultValue="null"/>
+        </createTable>
+        <createTable tableName="hashtag_post">
+            <column name="tag_id" type="int">
+                <constraints nullable="false"/>
+            </column>
+            <column name="post_id" type="int">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addPrimaryKey tableName="hashtag_post" columnNames="tag_id, post_id" constraintName="hashtag_post_pk"/>
+    </changeSet>
 </databaseChangeLog>
