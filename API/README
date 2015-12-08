@@ -1,8 +1,15 @@
 To build:
-mvn package
-
-To migrate:
-java -jar target/<jarname>.jar db migrate config/<ymlname>.yml
+$ mvn package
 
 To run:
-java -jar target/<jarname>.jar server config/<ymlname>.yml
+$ java -jar target/<jarname>.jar server config/<ymlname>.yml
+
+
+
+
+To migrate DB models:
+$ java -jar target/<jarname>.jar db migrate config/<ymlname>.yml
+
+To access DB:
+$ psql -h db.tagalyzer.io -p 5432 -U taguser
+Then enter pass
