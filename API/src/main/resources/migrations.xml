@@ -17,7 +17,7 @@
     <changeSet id="0" author="carlos-guzman">
         <dropTable tableName="tests"/>
         <createTable tableName="posts">
-            <column name="id" type="int">
+            <column name="id" type="int" autoIncrement="true">
                 <constraints primaryKey="true" /> </column>
             <column name="client_id" type="text">
                 <constraints nullable="false"></constraints> </column>
@@ -34,7 +34,7 @@
             </column>
         </createTable>
         <createTable tableName="clients">
-            <column name="id" type="int">
+            <column name="id" type="int" autoIncrement="true">
                 <constraints primaryKey="true"/>
             </column>
             <column name="name" type="text">
@@ -43,7 +43,7 @@
             <column name="url" type="text"/>
         </createTable>
         <createTable tableName="hashtags">
-            <column name="id" type="int">
+            <column name="id" type="int" autoIncrement="true">
                 <constraints primaryKey="true"/>
             </column>
             <column name="tag" type="text">
@@ -62,4 +62,20 @@
         </createTable>
         <addPrimaryKey tableName="hashtag_post" columnNames="tag_id, post_id" constraintName="hashtag_post_pk"/>
     </changeSet>
+    <!--<changeSet id="add_user_ids_to_posts" author="carlos-guzman">-->
+        <!--<addColumn tableName="posts">-->
+            <!--<column name="user_id" type="int"></column>-->
+        <!--</addColumn>-->
+        <!--<createTable tableName="users">-->
+            <!--<column name="id" type="int" autoIncrement="true">-->
+                <!--<constraints primaryKey="true"/>-->
+            <!--</column>-->
+            <!--<column name="name" type="text">-->
+                <!--<constraints nullable="false"/>-->
+            <!--</column>-->
+            <!--<column name="owner_id" type="int">-->
+                <!--<constraints nullable="false"/>-->
+            <!--</column>-->
+        <!--</createTable>-->
+    <!--</changeSet>-->
 </databaseChangeLog>
