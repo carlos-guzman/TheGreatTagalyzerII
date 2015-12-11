@@ -83,4 +83,12 @@
         <addAutoIncrement tableName="clients" columnName="id" incrementBy="1"/>
         <addAutoIncrement tableName="hashtags" columnName="id" incrementBy="1"/>
     </changeSet>
+    <changeSet id="Add foreign key constraints" author="carlos-guzman">
+        <addForeignKeyConstraint baseTableName="hashtag_post" baseColumnNames="post_id" constraintName="hashtag_post_FK_post" referencedTableName="posts"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="hashtag_post" baseColumnNames="tag_id" constraintName="hashtag_post_FK_tag" referencedTableName="hashtags"
+                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="posts" baseColumnNames="owner_id" constraintName="posts_FK_owner" referencedTableName="clients"
+                                 referencedColumnNames="id"/>
+    </changeSet>
 </databaseChangeLog>
