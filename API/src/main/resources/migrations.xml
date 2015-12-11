@@ -17,7 +17,7 @@
     <changeSet id="0" author="carlos-guzman">
         <dropTable tableName="tests"/>
         <createTable tableName="posts">
-            <column name="id" type="int" autoIncrement="true">
+            <column name="id" type="int">
                 <constraints primaryKey="true" /> </column>
             <column name="client_id" type="text">
                 <constraints nullable="false"></constraints> </column>
@@ -34,7 +34,7 @@
             </column>
         </createTable>
         <createTable tableName="clients">
-            <column name="id" type="int" autoIncrement="true">
+            <column name="id" type="int">
                 <constraints primaryKey="true"/>
             </column>
             <column name="name" type="text">
@@ -43,7 +43,7 @@
             <column name="url" type="text"/>
         </createTable>
         <createTable tableName="hashtags">
-            <column name="id" type="int" autoIncrement="true">
+            <column name="id" type="int">
                 <constraints primaryKey="true"/>
             </column>
             <column name="tag" type="text">
@@ -78,4 +78,9 @@
             <!--</column>-->
         <!--</createTable>-->
     <!--</changeSet>-->
+    <changeSet id="Add auto increments" author="carlos-guzman">
+        <addAutoIncrement tableName="posts" columnName="id" incrementBy="1"/>
+        <addAutoIncrement tableName="clients" columnName="id" incrementBy="1"/>
+        <addAutoIncrement tableName="hashtags" columnName="id" incrementBy="1"/>
+    </changeSet>
 </databaseChangeLog>
