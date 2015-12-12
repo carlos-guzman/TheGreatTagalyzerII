@@ -6,8 +6,8 @@ import io.dropwizard.jdbi.DBIFactory;
 import io.dropwizard.migrations.MigrationsBundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
-import io.tagalyzer.api.core.common.TestResource;
-import io.tagalyzer.api.core.dao.TestDAO;
+import io.tagalyzer.api.core.common.TagResource;
+import io.tagalyzer.api.core.dao.TagDAO;
 import io.tagalyzer.api.exception_mapper.UnableToExecuteStatementExceptionMapper;
 import org.eclipse.jetty.servlets.CrossOriginFilter;
 import org.skife.jdbi.v2.DBI;
@@ -17,34 +17,34 @@ import javax.servlet.FilterRegistration;
 import java.io.IOException;
 import java.util.EnumSet;
 
-public class TestApplication extends Application<TestConfiguration> {
+public class TagalyzerApplication extends Application<TagalyzerConfiguration> {
     
     public static void main(String[] args) throws Exception {
-        new TestApplication().run(args);
+        new TagalyzerApplication().run(args);
     }
     
     @Override
-    public void initialize(Bootstrap<TestConfiguration> bootstrap) {
-        bootstrap.addBundle(new MigrationsBundle<TestConfiguration>() {
+    public void initialize(Bootstrap<TagalyzerConfiguration> bootstrap) {
+        bootstrap.addBundle(new MigrationsBundle<TagalyzerConfiguration>() {
             @Override
-            public DataSourceFactory getDataSourceFactory(TestConfiguration configuration) {
+            public DataSourceFactory getDataSourceFactory(TagalyzerConfiguration configuration) {
                 return configuration.getDatabase();
             }
         });
     }
 
     @Override
-    public void run(TestConfiguration configuration, Environment environment) throws IOException, ClassNotFoundException {
+    public void run(TagalyzerConfiguration configuration, Environment environment) throws IOException, ClassNotFoundException {
         final DBIFactory factory = new DBIFactory();
         final DBI jdbi = factory.build(environment, configuration.getDatabase(), "database");
 
-        TestDAO testDAO = jdbi.onDemand(TestDAO.class);
+        TagDAO tagDAO = jdbi.onDemand(TagDAO.class);
 
-        TestResource testResource = new TestResource(testDAO);
+        TagResource tagResource = new TagResource(tagDAO);
 
         environment.jersey().register(new UnableToExecuteStatementExceptionMapper());
 
-        environment.jersey().register(testResource);
+        environment.jersey().register(tagResource);
 
         final FilterRegistration.Dynamic cors =
                 environment.servlets().addFilter("CORS", CrossOriginFilter.class);

@@ -5,13 +5,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dropwizard.jackson.JsonSnakeCase;
 
 @JsonSnakeCase
-public class Test {
+public class Tag {
     private int id;
     private String name;
 
     @JsonCreator
-    public Test(@JsonProperty("id") int id,
-                @JsonProperty("name") String testName) {
+    public Tag(@JsonProperty("id") int id,
+               @JsonProperty("name") String testName) {
         this.id = id;
         this.name = testName;
     }
@@ -37,10 +37,10 @@ public class Test {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        Test test = (Test) o;
+        Tag tag = (Tag) o;
 
-        if (id != test.id) return false;
-        return !(name != null ? !name.equals(test.name) : test.name != null);
+        if (id != tag.id) return false;
+        return !(name != null ? !name.equals(tag.name) : tag.name != null);
 
     }
 
