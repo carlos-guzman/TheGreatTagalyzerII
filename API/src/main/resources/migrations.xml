@@ -6,25 +6,24 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
-    <changeSet id="test" author="carlos-guzman">
-        <createTable tableName="tests">
-            <column name="id" type="int" autoIncrement="true">
-                <constraints primaryKey="true" />
+    <changeSet id="First set" author="carlos-guzman">
+        <createTable tableName="hashtags">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true"/>
             </column>
-            <column name="name" type="Text"> <constraints nullable="false" /> </column>
-        </createTable>
-    </changeSet>
-    <changeSet id="0" author="carlos-guzman">
-        <dropTable tableName="tests"/>
-        <createTable tableName="posts">
-            <column name="id" type="int">
-                <constraints primaryKey="true" /> </column>
-            <column name="client_id" type="text">
-                <constraints nullable="false"></constraints> </column>
-            <column name="text" type="text"></column>
-            <column name="owner_id" type="int">
+            <column name="name" type="text">
                 <constraints nullable="false"/>
             </column>
+            <column name="sentiment_value" type="float"/>
+            <column name="last_updated_at" type="timestamp" defaultValue="null"/>
+        </createTable>
+        <createTable tableName="posts">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" /> </column>
+            <column name="text" type="text">
+                <constraints nullable="false"/>
+            </column>
+            <column name="hashtag_id" type="bigint"></column>
             <column name="sentiment_value" type="float"/>
             <column name="inserted_at" type="timestamp" defaultValueComputed="CURRENT_TIMESTAMP">
                 <constraints nullable="false"/>
@@ -33,62 +32,7 @@
                 <constraints nullable="false"/>
             </column>
         </createTable>
-        <createTable tableName="clients">
-            <column name="id" type="int">
-                <constraints primaryKey="true"/>
-            </column>
-            <column name="name" type="text">
-                <constraints nullable="false"/>
-            </column>
-            <column name="url" type="text"/>
-        </createTable>
-        <createTable tableName="hashtags">
-            <column name="id" type="int">
-                <constraints primaryKey="true"/>
-            </column>
-            <column name="tag" type="text">
-                <constraints nullable="false"/>
-            </column>
-            <column name="sentiment_value" type="float"/>
-            <column name="last_updated_at" type="timestamp" defaultValue="null"/>
-        </createTable>
-        <createTable tableName="hashtag_post">
-            <column name="tag_id" type="int">
-                <constraints nullable="false"/>
-            </column>
-            <column name="post_id" type="int">
-                <constraints nullable="false"/>
-            </column>
-        </createTable>
-        <addPrimaryKey tableName="hashtag_post" columnNames="tag_id, post_id" constraintName="hashtag_post_pk"/>
-    </changeSet>
-    <!--<changeSet id="add_user_ids_to_posts" author="carlos-guzman">-->
-        <!--<addColumn tableName="posts">-->
-            <!--<column name="user_id" type="int"></column>-->
-        <!--</addColumn>-->
-        <!--<createTable tableName="users">-->
-            <!--<column name="id" type="int" autoIncrement="true">-->
-                <!--<constraints primaryKey="true"/>-->
-            <!--</column>-->
-            <!--<column name="name" type="text">-->
-                <!--<constraints nullable="false"/>-->
-            <!--</column>-->
-            <!--<column name="owner_id" type="int">-->
-                <!--<constraints nullable="false"/>-->
-            <!--</column>-->
-        <!--</createTable>-->
-    <!--</changeSet>-->
-    <changeSet id="Add auto increments" author="carlos-guzman">
-        <addAutoIncrement tableName="posts" columnName="id" incrementBy="1"/>
-        <addAutoIncrement tableName="clients" columnName="id" incrementBy="1"/>
-        <addAutoIncrement tableName="hashtags" columnName="id" incrementBy="1"/>
-    </changeSet>
-    <changeSet id="Add foreign key constraints" author="carlos-guzman">
-        <addForeignKeyConstraint baseTableName="hashtag_post" baseColumnNames="post_id" constraintName="hashtag_post_FK_post" referencedTableName="posts"
-                                 referencedColumnNames="id"/>
-        <addForeignKeyConstraint baseTableName="hashtag_post" baseColumnNames="tag_id" constraintName="hashtag_post_FK_tag" referencedTableName="hashtags"
-                                 referencedColumnNames="id"/>
-        <addForeignKeyConstraint baseTableName="posts" baseColumnNames="owner_id" constraintName="posts_FK_owner" referencedTableName="clients"
+        <addForeignKeyConstraint baseTableName="posts" baseColumnNames="hashtag_id" constraintName="hashtag_fk" referencedTableName="hashtags"
                                  referencedColumnNames="id"/>
     </changeSet>
 </databaseChangeLog>
