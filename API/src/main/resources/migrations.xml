@@ -6,9 +6,25 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
-    <changeSet id="First set" author="carlos-guzman">
-        <createTable tableName="hashtags">
-            <column name="id" type="bigint" autoIncrement="true">
+    <changeSet id="Add schemas" author="carlos-guzman">
+        <sql endDelimiter=";"
+             splitStatements="true"
+             stripComments="true">
+            CREATE SCHEMA IF NOT EXISTS shard_0000001;
+            CREATE SCHEMA IF NOT EXISTS shard_0000002;
+            CREATE SCHEMA IF NOT EXISTS shard_0000003;
+            CREATE SCHEMA IF NOT EXISTS shard_0000004;
+        </sql>
+        <rollback>
+            DROP SCHEMA IF EXISTS shard_0000001;
+            DROP SCHEMA IF EXISTS shard_0000002;
+            DROP SCHEMA IF EXISTS shard_0000003;
+            DROP SCHEMA IF EXISTS shard_0000004;
+        </rollback>
+    </changeSet>
+    <changeSet id="Add initial tables in shard_0000001" author="carlos-guzman">
+        <createTable tableName="hashtags" schemaName="shard_0000001">
+            <column name="id" type="bigint">
                 <constraints primaryKey="true"/>
             </column>
             <column name="name" type="text">
@@ -17,8 +33,8 @@
             <column name="sentiment_value" type="float"/>
             <column name="last_updated_at" type="timestamp" defaultValue="null"/>
         </createTable>
-        <createTable tableName="posts">
-            <column name="id" type="bigint" autoIncrement="true">
+        <createTable tableName="posts" schemaName="shard_0000001">
+            <column name="id" type="bigint">
                 <constraints primaryKey="true" /> </column>
             <column name="text" type="text">
                 <constraints nullable="false"/>
@@ -32,7 +48,178 @@
                 <constraints nullable="false"/>
             </column>
         </createTable>
-        <addForeignKeyConstraint baseTableName="posts" baseColumnNames="hashtag_id" constraintName="hashtag_fk" referencedTableName="hashtags"
-                                 referencedColumnNames="id"/>
+        <addForeignKeyConstraint baseTableName="posts" baseColumnNames="hashtag_id" baseTableSchemaName="shard_0000001" constraintName="hashtag_fk" referencedTableName="hashtags"
+                                 referencedColumnNames="id" referencedTableSchemaName="shard_0000001"/>
+    </changeSet>
+    <changeSet id="Add function for next hashtag id in shard_0000001" author="carlos-guzman">
+        <sql endDelimiter=";"
+             splitStatements="false"
+             stripComments="true">
+            CREATE SEQUENCE shard_0000001.hashtags_id_seq;
+            CREATE OR REPLACE FUNCTION shard_0000001.next_hashtag_id(OUT result bigint) AS $$
+            DECLARE seq_id bigint;
+            shard_id int := 0000001;
+            BEGIN
+            SELECT nextval('shard_0000001.hashtags_id_seq') INTO seq_id;
+
+            result := shard_id;
+            result := result * 2^31;
+            result := result | (seq_id);
+            END;
+            $$  LANGUAGE PLPGSQL ;
+        </sql>
+    </changeSet>
+    <changeSet id="Add hashtag id function as default for shard_0000001" author="carlos-guzman">
+        <addDefaultValue tableName="hashtags" columnName="id" schemaName="shard_0000001" defaultValueComputed="shard_0000001.next_hashtag_id()"/>
+    </changeSet>
+    <changeSet id="Add initial tables in shard_0000002" author="carlos-guzman">
+        <createTable tableName="hashtags" schemaName="shard_0000002">
+            <column name="id" type="bigint">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="name" type="text">
+                <constraints nullable="false"/>
+            </column>
+            <column name="sentiment_value" type="float"/>
+            <column name="last_updated_at" type="timestamp" defaultValue="null"/>
+        </createTable>
+        <createTable tableName="posts" schemaName="shard_0000002">
+            <column name="id" type="bigint">
+                <constraints primaryKey="true" /> </column>
+            <column name="text" type="text">
+                <constraints nullable="false"/>
+            </column>
+            <column name="hashtag_id" type="bigint"></column>
+            <column name="sentiment_value" type="float"/>
+            <column name="inserted_at" type="timestamp" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="timestamp" defaultValue="null">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="posts" baseColumnNames="hashtag_id" baseTableSchemaName="shard_0000002" constraintName="hashtag_fk" referencedTableName="hashtags"
+                                 referencedColumnNames="id" referencedTableSchemaName="shard_0000002"/>
+    </changeSet>
+    <changeSet id="Add function for next hashtag id in shard_0000002" author="carlos-guzman">
+        <sql endDelimiter=";"
+             splitStatements="false"
+             stripComments="true">
+            CREATE SEQUENCE shard_0000002.hashtags_id_seq;
+            CREATE OR REPLACE FUNCTION shard_0000002.next_hashtag_id(OUT result bigint) AS $$
+            DECLARE seq_id bigint;
+            shard_id int := 0000002;
+            BEGIN
+            SELECT nextval('shard_0000002.hashtags_id_seq') INTO seq_id;
+
+            result := shard_id;
+            result := result * 2^31;
+            result := result | (seq_id);
+            END;
+            $$  LANGUAGE PLPGSQL ;
+        </sql>
+    </changeSet>
+    <changeSet id="Add hashtag id function as default for shard_0000002" author="carlos-guzman">
+        <addDefaultValue tableName="hashtags" columnName="id" schemaName="shard_0000002" defaultValueComputed="shard_0000002.next_hashtag_id()"/>
+    </changeSet>
+    <changeSet id="Add initial tables in shard_0000003" author="carlos-guzman">
+        <createTable tableName="hashtags" schemaName="shard_0000003">
+            <column name="id" type="bigint">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="name" type="text">
+                <constraints nullable="false"/>
+            </column>
+            <column name="sentiment_value" type="float"/>
+            <column name="last_updated_at" type="timestamp" defaultValue="null"/>
+        </createTable>
+        <createTable tableName="posts" schemaName="shard_0000003">
+            <column name="id" type="bigint">
+                <constraints primaryKey="true" /> </column>
+            <column name="text" type="text">
+                <constraints nullable="false"/>
+            </column>
+            <column name="hashtag_id" type="bigint"></column>
+            <column name="sentiment_value" type="float"/>
+            <column name="inserted_at" type="timestamp" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="timestamp" defaultValue="null">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="posts" baseColumnNames="hashtag_id" baseTableSchemaName="shard_0000003" constraintName="hashtag_fk" referencedTableName="hashtags"
+                                 referencedColumnNames="id" referencedTableSchemaName="shard_0000003"/>
+    </changeSet>
+    <changeSet id="Add function for next hashtag id in shard_0000003" author="carlos-guzman">
+        <sql endDelimiter=";"
+             splitStatements="false"
+             stripComments="true">
+            CREATE SEQUENCE shard_0000003.hashtags_id_seq;
+            CREATE OR REPLACE FUNCTION shard_0000003.next_hashtag_id(OUT result bigint) AS $$
+            DECLARE seq_id bigint;
+            shard_id int := 0000003;
+            BEGIN
+            SELECT nextval('shard_0000003.hashtags_id_seq') INTO seq_id;
+
+            result := shard_id;
+            result := result * 2^31;
+            result := result | (seq_id);
+            END;
+            $$  LANGUAGE PLPGSQL ;
+        </sql>
+    </changeSet>
+    <changeSet id="Add hashtag id function as default for shard_0000003" author="carlos-guzman">
+        <addDefaultValue tableName="hashtags" columnName="id" schemaName="shard_0000003" defaultValueComputed="shard_0000003.next_hashtag_id()"/>
+    </changeSet>
+    <changeSet id="Add initial tables in shard_0000004" author="carlos-guzman">
+        <createTable tableName="hashtags" schemaName="shard_0000004">
+            <column name="id" type="bigint">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="name" type="text">
+                <constraints nullable="false"/>
+            </column>
+            <column name="sentiment_value" type="float"/>
+            <column name="last_updated_at" type="timestamp" defaultValue="null"/>
+        </createTable>
+        <createTable tableName="posts" schemaName="shard_0000004">
+            <column name="id" type="bigint">
+                <constraints primaryKey="true" /> </column>
+            <column name="text" type="text">
+                <constraints nullable="false"/>
+            </column>
+            <column name="hashtag_id" type="bigint"></column>
+            <column name="sentiment_value" type="float"/>
+            <column name="inserted_at" type="timestamp" defaultValueComputed="CURRENT_TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="created_at" type="timestamp" defaultValue="null">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addForeignKeyConstraint baseTableName="posts" baseColumnNames="hashtag_id" baseTableSchemaName="shard_0000004" constraintName="hashtag_fk" referencedTableName="hashtags"
+                                 referencedColumnNames="id" referencedTableSchemaName="shard_0000004"/>
+    </changeSet>
+    <changeSet id="Add function for next hashtag id in shard_0000004" author="carlos-guzman">
+        <sql endDelimiter=";"
+             splitStatements="false"
+             stripComments="true">
+            CREATE SEQUENCE shard_0000004.hashtags_id_seq;
+            CREATE OR REPLACE FUNCTION shard_0000004.next_hashtag_id(OUT result bigint) AS $$
+            DECLARE seq_id bigint;
+            shard_id int := 0000004;
+            BEGIN
+            SELECT nextval('shard_0000004.hashtags_id_seq') INTO seq_id;
+
+            result := shard_id;
+            result := result * 2^31;
+            result := result | (seq_id);
+            END;
+            $$  LANGUAGE PLPGSQL ;
+        </sql>
+    </changeSet>
+    <changeSet id="Add hashtag id function as default for shard_0000004" author="carlos-guzman">
+        <addDefaultValue tableName="hashtags" columnName="id" schemaName="shard_0000004" defaultValueComputed="shard_0000004.next_hashtag_id()"/>
     </changeSet>
 </databaseChangeLog>
