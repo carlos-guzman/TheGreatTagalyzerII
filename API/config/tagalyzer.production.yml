@@ -13,3 +13,12 @@ database:
   checkConnectionWhileIdle: false
   evictionInterval: 10s
   minIdleTime: 1 minute
+
+
+server:
+  applicationConnectors:
+  - type: http
+    port: 80
+  adminConnectors:
+  - type: http
+    port: 81
