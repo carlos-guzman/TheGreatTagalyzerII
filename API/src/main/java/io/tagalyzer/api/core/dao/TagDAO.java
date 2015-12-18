@@ -1,14 +1,10 @@
 package io.tagalyzer.api.core.dao;
 
 import io.tagalyzer.api.core.mappers.PostMapper;
-import io.tagalyzer.api.core.mappers.StatsMapper;
 import io.tagalyzer.api.core.mappers.TagMapper;
 import io.tagalyzer.api.core.models.Post;
-import io.tagalyzer.api.core.models.Stats;
 import io.tagalyzer.api.core.models.Tag;
 import org.skife.jdbi.v2.sqlobject.Bind;
-import org.skife.jdbi.v2.sqlobject.BindBean;
-import org.skife.jdbi.v2.sqlobject.GetGeneratedKeys;
 import org.skife.jdbi.v2.sqlobject.SqlQuery;
 import org.skife.jdbi.v2.sqlobject.customizers.Define;
 import org.skife.jdbi.v2.sqlobject.customizers.Mapper;
@@ -31,9 +27,9 @@ public interface TagDAO {
     @SqlQuery("select * from hashtags where tag=:tag")
     Tag getTag(@Bind("tag") String tag);
 
-    @Mapper(StatsMapper.class)
-    @SqlQuery("select hashtags.*, count from hashtags left join (select tag_id,count(*) as count from hashtag_post GROUP BY tag_id) as hp on hp.tag_id=hashtags.id where tag=:tag")
-    Stats getStats(@Bind("tag") String tag);
+//    @Mapper(StatsMapper.class)
+//    @SqlQuery("select hashtags.*, count from hashtags left join (select tag_id,count(*) as count from hashtag_post GROUP BY tag_id) as hp on hp.tag_id=hashtags.id where tag=:tag")
+//    Stats getStats(@Bind("tag") String tag);
 
     @SqlQuery("select count(*) from hashtag_post left join hashtags on tag_id=id where tag=:tag")
     int getCount(@Bind("tag") String tag);
