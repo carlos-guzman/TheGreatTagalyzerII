@@ -23,8 +23,8 @@ public interface TagDAO {
     @SqlQuery("select posts.* from <shard>.posts left join <shard>.hashtags on posts.hashtag_id=hashtags.id where hashtags.name=:tag ORDER BY created_at DESC")
     List<Post> listPosts(@Define("shard") String shard,@Bind("tag") String tag);
 
-    @SqlQuery("select * from hashtags ORDER BY id ASC")
-    List<Tag> listTags();
+    @SqlQuery("select * from <shard>.hashtags WHERE id > 0 ORDER BY name ASC")
+    List<Tag> listTags(@Define("shard") String shard);
 
     @SqlQuery("select * from <shard>.hashtags where name=:tag")
     Tag getTag(@Define("shard") String shard, @Bind("tag") String tag);

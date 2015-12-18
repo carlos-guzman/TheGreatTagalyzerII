@@ -10,9 +10,7 @@ import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Path("/")
 @Produces(MediaType.APPLICATION_JSON)
@@ -63,9 +61,17 @@ public class TagResource {
     @GET
     @Path("/hashtags")
     public Response listHashtags(){
-        List<Tag> tagList;
+        List<Tag> tagList = new ArrayList<Tag>();
 
-        tagList = tagDAO.listTags();
+        for(int i=1;i<=TagalyzerConfiguration.shardTotal;i++) {
+            tagList.addAll(tagDAO.listTags(String.format("shard_%07d", i)));
+        }
+        Collections.sort(tagList, new Comparator<Tag>() {
+            @Override
+            public int compare(Tag o1, Tag o2) {
+                return o1.getName().compareTo(o2.getName());
+            }
+        });
 
         return Response.ok(tagList).build();
     }
