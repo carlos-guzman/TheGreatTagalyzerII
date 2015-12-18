@@ -11,6 +11,6 @@ public class TagMapper implements ResultSetMapper<Tag> {
 
     @Override
     public Tag map(int i, ResultSet rs, StatementContext ctx) throws SQLException {
-        return new Tag(rs.getInt("id"), rs.getString("tag"));
+        return new Tag(rs.getLong("id"), rs.getString("tag"));
     }
 }

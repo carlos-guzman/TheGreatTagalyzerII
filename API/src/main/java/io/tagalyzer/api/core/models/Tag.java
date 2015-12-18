@@ -6,17 +6,17 @@ import io.dropwizard.jackson.JsonSnakeCase;
 
 @JsonSnakeCase
 public class Tag {
-    private int id;
+    private long id;
     private String name;
 
     @JsonCreator
-    public Tag(@JsonProperty("id") int id,
+    public Tag(@JsonProperty("id") long id,
                @JsonProperty("name") String testName) {
         this.id = id;
         this.name = testName;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
@@ -46,7 +46,7 @@ public class Tag {
 
     @Override
     public int hashCode() {
-        int result = id;
+        int result = (int) (id ^ (id >>> 32));
         result = 31 * result + (name != null ? name.hashCode() : 0);
         return result;
     }

@@ -1,39 +1,65 @@
 package io.tagalyzer.api.core.models;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dropwizard.jackson.JsonSnakeCase;
+import org.joda.time.DateTime;
 
+import java.sql.Time;
 import java.sql.Timestamp;
+import java.util.Date;
 
 @JsonSnakeCase
 public class Post {
-    private int id;
+    private long id;
     private String client_id;
     private int owner_id;
     private String text;
     private Float sentiment_value;
     private Timestamp created_at;
     private Timestamp inserted_at;
+    private String url;
 
     @JsonCreator
-    public Post(@JsonProperty("id") int id,
-                @JsonProperty("client_id") String client_id,
-                @JsonProperty("owner_id") int owner_id,
+    public Post(@JsonProperty("id") long id,
+                @JsonProperty("client_id") String clientId,
+                @JsonProperty("owner_id") int ownerId,
                 @JsonProperty("text") String text,
-                @JsonProperty("sentiment_value") Float sentiment_value,
-                @JsonProperty("created_at") Timestamp created_at,
-                @JsonProperty("inserted_at") Timestamp inserted_at) {
-        this.id = id;
-        this.client_id = client_id;
-        this.owner_id = owner_id;
-        this.text = text;
-        this.sentiment_value = sentiment_value;
-        this.created_at = created_at;
-        this.inserted_at = inserted_at;
+                @JsonProperty("sentiment_value") Float sentimentValue,
+                @JsonProperty("created_at") Timestamp createdAt,
+                @JsonProperty("inserted_at") Timestamp insertedAt) {
+        this(id, clientId, ownerId, text, sentimentValue, createdAt, insertedAt, null);
     }
 
-    public int getId() {
+    public Post(long id,
+                String clientId,
+                String text,
+                Float sentimentValue,
+                Timestamp createdAt,
+                Timestamp insertedAt){
+        this(id, clientId, 0, text, sentimentValue, createdAt, insertedAt, null);
+    }
+
+    public Post(long id,
+                String clientId,
+                int ownerId,
+                String text,
+                Float sentimentValue,
+                Timestamp createdAt,
+                Timestamp insertedAt,
+                String url){
+        this.id = id;
+        this.client_id = clientId;
+        this.owner_id = ownerId;
+        this.text = text;
+        this.sentiment_value = sentimentValue;
+        this.created_at = createdAt;
+        this.inserted_at = insertedAt;
+        this.url = url;
+    }
+
+    public long getId() {
         return id;
     }
 
@@ -49,6 +75,7 @@ public class Post {
         this.client_id = client_id;
     }
 
+    @JsonIgnore
     public int getOwner_id() {
         return owner_id;
     }
@@ -77,15 +104,24 @@ public class Post {
         return created_at;
     }
 
-    public void setCreated_at(Timestamp created_at) {
-        this.created_at = created_at;
-    }
-
     public Timestamp getInserted_at() {
         return inserted_at;
     }
 
+    public void setCreated_at(Timestamp created_at) {
+        this.created_at = created_at;
+    }
+
     public void setInserted_at(Timestamp inserted_at) {
         this.inserted_at = inserted_at;
+    }
+
+    @JsonIgnore
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
     }
 }

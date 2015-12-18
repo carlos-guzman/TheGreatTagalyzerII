@@ -23,6 +23,13 @@
         </rollback>
     </changeSet>
     <changeSet id="Add initial tables in shard_0000001" author="carlos-guzman">
+        <createTable tableName="clients" schemaName="shard_0000001">
+            <column name="id" type="bigint">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="name" type="text"/>
+            <column name="url" type="text"/>
+        </createTable>
         <createTable tableName="hashtags" schemaName="shard_0000001">
             <column name="id" type="bigint">
                 <constraints primaryKey="true"/>
@@ -36,6 +43,7 @@
         <createTable tableName="posts" schemaName="shard_0000001">
             <column name="id" type="bigint">
                 <constraints primaryKey="true" /> </column>
+            <column name="client_id" type="text"></column>
             <column name="text" type="text">
                 <constraints nullable="false"/>
             </column>
@@ -68,9 +76,26 @@
             END;
             $$  LANGUAGE PLPGSQL ;
         </sql>
+        <sql endDelimiter=";"
+             splitStatements="false"
+             stripComments="true">
+            CREATE SEQUENCE shard_0000001.posts_id_seq;
+            CREATE OR REPLACE FUNCTION shard_0000001.next_post_id(OUT result bigint) AS $$
+            DECLARE seq_id bigint;
+            shard_id int := 0000001;
+            BEGIN
+            SELECT nextval('shard_0000001.posts_id_seq') INTO seq_id;
+
+            result := shard_id;
+            result := result * 2^31;
+            result := result | (seq_id);
+            END;
+            $$  LANGUAGE PLPGSQL ;
+        </sql>
     </changeSet>
     <changeSet id="Add hashtag id function as default for shard_0000001" author="carlos-guzman">
         <addDefaultValue tableName="hashtags" columnName="id" schemaName="shard_0000001" defaultValueComputed="shard_0000001.next_hashtag_id()"/>
+        <addDefaultValue tableName="posts" columnName="id" schemaName="shard_0000001" defaultValueComputed="shard_0000001.next_post_id()"/>
     </changeSet>
     <changeSet id="Add initial tables in shard_0000002" author="carlos-guzman">
         <createTable tableName="hashtags" schemaName="shard_0000002">
@@ -86,6 +111,7 @@
         <createTable tableName="posts" schemaName="shard_0000002">
             <column name="id" type="bigint">
                 <constraints primaryKey="true" /> </column>
+            <column name="client_id" type="text"></column>
             <column name="text" type="text">
                 <constraints nullable="false"/>
             </column>
@@ -118,9 +144,26 @@
             END;
             $$  LANGUAGE PLPGSQL ;
         </sql>
+        <sql endDelimiter=";"
+             splitStatements="false"
+             stripComments="true">
+            CREATE SEQUENCE shard_0000002.posts_id_seq;
+            CREATE OR REPLACE FUNCTION shard_0000002.next_post_id(OUT result bigint) AS $$
+            DECLARE seq_id bigint;
+            shard_id int := 0000002;
+            BEGIN
+            SELECT nextval('shard_0000002.posts_id_seq') INTO seq_id;
+
+            result := shard_id;
+            result := result * 2^31;
+            result := result | (seq_id);
+            END;
+            $$  LANGUAGE PLPGSQL ;
+        </sql>
     </changeSet>
     <changeSet id="Add hashtag id function as default for shard_0000002" author="carlos-guzman">
         <addDefaultValue tableName="hashtags" columnName="id" schemaName="shard_0000002" defaultValueComputed="shard_0000002.next_hashtag_id()"/>
+        <addDefaultValue tableName="posts" columnName="id" schemaName="shard_0000002" defaultValueComputed="shard_0000002.next_post_id()"/>
     </changeSet>
     <changeSet id="Add initial tables in shard_0000003" author="carlos-guzman">
         <createTable tableName="hashtags" schemaName="shard_0000003">
@@ -136,6 +179,7 @@
         <createTable tableName="posts" schemaName="shard_0000003">
             <column name="id" type="bigint">
                 <constraints primaryKey="true" /> </column>
+            <column name="client_id" type="text"></column>
             <column name="text" type="text">
                 <constraints nullable="false"/>
             </column>
@@ -168,9 +212,26 @@
             END;
             $$  LANGUAGE PLPGSQL ;
         </sql>
+        <sql endDelimiter=";"
+             splitStatements="false"
+             stripComments="true">
+            CREATE SEQUENCE shard_0000003.posts_id_seq;
+            CREATE OR REPLACE FUNCTION shard_0000003.next_post_id(OUT result bigint) AS $$
+            DECLARE seq_id bigint;
+            shard_id int := 0000003;
+            BEGIN
+            SELECT nextval('shard_0000003.posts_id_seq') INTO seq_id;
+
+            result := shard_id;
+            result := result * 2^31;
+            result := result | (seq_id);
+            END;
+            $$  LANGUAGE PLPGSQL ;
+        </sql>
     </changeSet>
     <changeSet id="Add hashtag id function as default for shard_0000003" author="carlos-guzman">
         <addDefaultValue tableName="hashtags" columnName="id" schemaName="shard_0000003" defaultValueComputed="shard_0000003.next_hashtag_id()"/>
+        <addDefaultValue tableName="posts" columnName="id" schemaName="shard_0000003" defaultValueComputed="shard_0000003.next_post_id()"/>
     </changeSet>
     <changeSet id="Add initial tables in shard_0000004" author="carlos-guzman">
         <createTable tableName="hashtags" schemaName="shard_0000004">
@@ -186,6 +247,7 @@
         <createTable tableName="posts" schemaName="shard_0000004">
             <column name="id" type="bigint">
                 <constraints primaryKey="true" /> </column>
+            <column name="client_id" type="text"></column>
             <column name="text" type="text">
                 <constraints nullable="false"/>
             </column>
@@ -218,8 +280,25 @@
             END;
             $$  LANGUAGE PLPGSQL ;
         </sql>
+        <sql endDelimiter=";"
+             splitStatements="false"
+             stripComments="true">
+            CREATE SEQUENCE shard_0000004.posts_id_seq;
+            CREATE OR REPLACE FUNCTION shard_0000004.next_post_id(OUT result bigint) AS $$
+            DECLARE seq_id bigint;
+            shard_id int := 0000004;
+            BEGIN
+            SELECT nextval('shard_0000004.posts_id_seq') INTO seq_id;
+
+            result := shard_id;
+            result := result * 2^31;
+            result := result | (seq_id);
+            END;
+            $$  LANGUAGE PLPGSQL ;
+        </sql>
     </changeSet>
     <changeSet id="Add hashtag id function as default for shard_0000004" author="carlos-guzman">
         <addDefaultValue tableName="hashtags" columnName="id" schemaName="shard_0000004" defaultValueComputed="shard_0000004.next_hashtag_id()"/>
+        <addDefaultValue tableName="posts" columnName="id" schemaName="shard_0000004" defaultValueComputed="shard_0000004.next_post_id()"/>
     </changeSet>
 </databaseChangeLog>
