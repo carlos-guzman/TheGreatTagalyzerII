@@ -6,7 +6,8 @@ import io.dropwizard.jdbi.DBIFactory;
 import io.dropwizard.migrations.MigrationsBundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
-import io.tagalyzer.api.core.common.TagResource;
+import io.tagalyzer.api.core.resources.TagResource;
+import io.tagalyzer.api.core.dao.PostDAO;
 import io.tagalyzer.api.core.dao.TagDAO;
 import io.tagalyzer.api.exception_mapper.UnableToExecuteStatementExceptionMapper;
 import org.eclipse.jetty.servlets.CrossOriginFilter;
@@ -39,8 +40,9 @@ public class TagalyzerApplication extends Application<TagalyzerConfiguration> {
         final DBI jdbi = factory.build(environment, configuration.getDatabase(), "database");
 
         TagDAO tagDAO = jdbi.onDemand(TagDAO.class);
+        PostDAO postDAO = jdbi.onDemand(PostDAO.class);
 
-        TagResource tagResource = new TagResource(tagDAO);
+        TagResource tagResource = new TagResource(tagDAO, postDAO);
 
         environment.jersey().register(new UnableToExecuteStatementExceptionMapper());
 

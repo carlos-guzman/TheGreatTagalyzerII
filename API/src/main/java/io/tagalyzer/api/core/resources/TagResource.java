@@ -1,7 +1,8 @@
-package io.tagalyzer.api.core.common;
+package io.tagalyzer.api.core.resources;
 
 
 import io.tagalyzer.api.TagalyzerConfiguration;
+import io.tagalyzer.api.core.dao.PostDAO;
 import io.tagalyzer.api.core.dao.TagDAO;
 import io.tagalyzer.api.core.models.Post;
 import io.tagalyzer.api.core.models.Tag;
@@ -16,10 +17,15 @@ import java.util.*;
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class TagResource {
-    private final TagDAO tagDAO;
 
-    public TagResource(TagDAO tagDAO) {
+    //TODO divide this into PostResource and TagResource
+
+    private final TagDAO tagDAO;
+    private final PostDAO postDAO;
+
+    public TagResource(TagDAO tagDAO, PostDAO postDAO) {
         this.tagDAO = tagDAO;
+        this.postDAO = postDAO;
     }
 
     @POST
@@ -35,12 +41,12 @@ public class TagResource {
             tag_id = tagDAO.createTag(shard, tag);
             if (tag_id==0)
                 tag_id = tagDAO.getTag(shard, tag).getId();
-            tagDAO.createPost(shard, post, tag_id);
+            postDAO.createPost(shard, post, tag_id);
             System.out.print("a");
         }
         if (tagList.isEmpty()){
             System.out.print("b");
-            tagDAO.createPost("shard_0000001", post, 0);
+            postDAO.createPost("shard_0000001", post, 0);
         }
 
         System.out.println(shard+"  "+tag_id+"   "+post_id);
@@ -48,14 +54,53 @@ public class TagResource {
     }
 
     @GET
-    @Path("/hashtags/{tag_name}")
-    public Response listPosts(@PathParam("tag_name") String tagName) {
+    @Path("/hashtags/{tag_name}/posts")
+    public Response listPosts(@PathParam("tag_name") String tagName,
+                              @QueryParam("page") int pageNum) {
         List<Post> postList;
         String shardStr = getShard(tagName);
+        HashMap<String, Object> entity = new HashMap<>();
 
-        postList = tagDAO.listPosts(shardStr, tagName);
+        if (pageNum < -1) {
+            return Response.status(400).entity(new HashMap<String, String>(){{put("message","Please enter a positive page number");}}).build();
+        } else if (pageNum > 0) {
+            pageNum--;
+        }
 
-        return Response.ok(postList).build();
+        int count = tagDAO.getCount(shardStr, tagName);
+
+        if (pageNum == -1){
+            postList = postDAO.listAllPosts(shardStr, tagName);
+        } else {
+            postList = postDAO.listPosts(shardStr, tagName, pageNum);
+            if (count > (pageNum+1)*TagalyzerConfiguration.perPageCount) {
+                entity.put("next_page", "api.tagalyzer.io/hashtags/" + tagName + "/posts?page=" + (pageNum + 2));
+            }
+            if (pageNum > 0){
+                entity.put("previous_page", "api.tagalyzer.io/hashtags/" + tagName + "/posts?page=" + pageNum);
+            }
+        }
+        entity.put("posts", postList);
+        entity.put("count", count);
+        entity.put("page", pageNum+1);
+
+
+
+        return Response.ok(entity).build();
+    }
+
+    @GET
+    @Path("/hashtags/{tag_name}")
+    public Response getHashtag(@PathParam("tag_name") String tagName) {
+        String shardStr = getShard(tagName);
+
+        Tag tag = tagDAO.getTag(shardStr, tagName);
+
+        if (tag == null){
+            return Response.status(404).build();
+        }
+
+        return Response.ok(tag).build();
     }
 
     @GET
@@ -74,6 +119,22 @@ public class TagResource {
         });
 
         return Response.ok(tagList).build();
+    }
+
+    @GET
+    @Path("/posts/{post_id}")
+    public Response getPostById(@PathParam("post_id") long postId){
+        Post post= null;
+        for(int i=1;i<=TagalyzerConfiguration.shardTotal;i++) {
+            post = postDAO.getPost(String.format("shard_%07d", i), postId);
+            if (post != null) break;
+        }
+        if (post==null){
+            return Response.status(404).entity(new HashMap<String, String>() {{
+                put("message", "Post with id "+postId+" not found.");
+            }}).build();
+        }
+        return Response.ok(post).build();
     }
 
 //    @GET
