@@ -8,12 +8,15 @@ import io.dropwizard.jackson.JsonSnakeCase;
 public class Tag {
     private long id;
     private String name;
+    private float sentimentValue;
 
     @JsonCreator
     public Tag(@JsonProperty("id") long id,
-               @JsonProperty("name") String testName) {
+               @JsonProperty("name") String testName,
+               @JsonProperty("sentiment_value") float sentimentValue) {
         this.id = id;
         this.name = testName;
+        this.sentimentValue=sentimentValue;
     }
 
     public long getId() {
@@ -32,6 +35,18 @@ public class Tag {
         this.name = name;
     }
 
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public float getSentimentValue() {
+        return sentimentValue;
+    }
+
+    public void setSentimentValue(float sentimentValue) {
+        this.sentimentValue = sentimentValue;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -40,6 +55,7 @@ public class Tag {
         Tag tag = (Tag) o;
 
         if (id != tag.id) return false;
+        if (Float.compare(tag.sentimentValue, sentimentValue) != 0) return false;
         return !(name != null ? !name.equals(tag.name) : tag.name != null);
 
     }
@@ -48,6 +64,7 @@ public class Tag {
     public int hashCode() {
         int result = (int) (id ^ (id >>> 32));
         result = 31 * result + (name != null ? name.hashCode() : 0);
+        result = 31 * result + (sentimentValue != +0.0f ? Float.floatToIntBits(sentimentValue) : 0);
         return result;
     }
 }

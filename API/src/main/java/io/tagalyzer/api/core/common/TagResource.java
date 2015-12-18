@@ -4,17 +4,15 @@ package io.tagalyzer.api.core.common;
 import io.tagalyzer.api.TagalyzerConfiguration;
 import io.tagalyzer.api.core.dao.TagDAO;
 import io.tagalyzer.api.core.models.Post;
-import io.tagalyzer.api.core.models.Stats;
 import io.tagalyzer.api.core.models.Tag;
 
 import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeParseException;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Path("/")
 @Produces(MediaType.APPLICATION_JSON)
@@ -26,25 +24,34 @@ public class TagResource {
         this.tagDAO = tagDAO;
     }
 
-//    @POST
-//    @Path("/posts")
-//    public Response createTag(@Valid Post post) {
-//
-//        int id = tagDAO.create(test);
-//
-//        if (id == 0) {
-//            return Response.status(Response.Status.NOT_MODIFIED).build();
-//        }
-//
-//        test.setId(id);
-//
-//        return Response.ok(test).build();
-//    }
+    @POST
+    @Path("/posts")
+    public Response createPost(@Valid Post post) {
+
+        Set<String> tagList = parsePost(post);
+        String shard = null;
+        long tag_id = 0;
+        long post_id= 0;
+        for(String tag : tagList) {
+            shard = getShard(tag);
+            tag_id = tagDAO.createTag(shard, tag);
+            if (tag_id==0)
+                tag_id = tagDAO.getTag(shard, tag).getId();
+            tagDAO.createPost(shard, post, tag_id);
+            System.out.print("a");
+        }
+        if (tagList.isEmpty()){
+            System.out.print("b");
+            tagDAO.createPost("shard_0000001", post, 0);
+        }
+
+        System.out.println(shard+"  "+tag_id+"   "+post_id);
+        return Response.ok().build();
+    }
 
     @GET
     @Path("/hashtags/{tag_name}")
-    public Response listPosts(@PathParam("tag_name") String tagName,
-                              @QueryParam("since") String sinceStr) {
+    public Response listPosts(@PathParam("tag_name") String tagName) {
         List<Post> postList;
         String shardStr = getShard(tagName);
 
@@ -63,15 +70,15 @@ public class TagResource {
         return Response.ok(tagList).build();
     }
 
-    @GET
-    @Path("/analysis/{tag_name}")
-    public Response getAnalysis(@PathParam("tag_name") String tagName){
-        Tag tag;
-
-        tag = tagDAO.getTag(tagName);
-
-        return Response.ok(tag).build();
-    }
+//    @GET
+//    @Path("/analysis/{tag_name}")
+//    public Response getAnalysis(@PathParam("tag_name") String tagName){
+//        Tag tag;
+//
+//        tag = tagDAO.getTag(tagName);
+//
+//        return Response.ok(tag).build();
+//    }
 
 //    @GET
 //    @Path("/stats/{tag_name}")
@@ -100,8 +107,18 @@ public class TagResource {
 //        return Response.ok(stats).build();
 //    }
 
-    public String getShard(String tagName){
+    private String getShard(String tagName){
         int shardId = ((tagName.hashCode() % TagalyzerConfiguration.shardTotal) + TagalyzerConfiguration.shardTotal) % TagalyzerConfiguration.shardTotal;
-        return String.format("shard_%07d", shardId);
+        return String.format("shard_%07d", shardId+1);
+    }
+    private Set<String> parsePost(Post post){
+        String[] words = post.getText().split(" ");
+        Set<String> hashtags = new HashSet<String>();
+        for (String word : words) {
+            if (word.startsWith("#")) {
+                hashtags.add(word.substring(1));
+            }
+        }
+        return hashtags;
     }
 }

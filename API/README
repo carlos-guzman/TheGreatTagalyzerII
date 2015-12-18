@@ -13,3 +13,14 @@ $ java -jar target/<jarname>.jar db migrate config/<ymlname>.yml
 To access DB:
 $ psql -h db.tagalyzer.io -p 5432 -U taguser
 Then enter pass
+
+
+Working:
+
+POST /posts
+  {
+    "client_id": "1",
+    "text": "meow asdfasdfqwer #hello #asdf"
+  }
+
+GET /hashtags/hello

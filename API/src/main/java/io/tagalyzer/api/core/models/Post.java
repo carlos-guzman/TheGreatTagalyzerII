@@ -4,19 +4,16 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dropwizard.jackson.JsonSnakeCase;
-import org.joda.time.DateTime;
 
-import java.sql.Time;
 import java.sql.Timestamp;
-import java.util.Date;
 
 @JsonSnakeCase
 public class Post {
     private long id;
-    private String client_id;
-    private int owner_id;
+    private String clientId;
+    private int ownerId;
     private String text;
-    private Float sentiment_value;
+    private Float sentimentValue;
     private Timestamp created_at;
     private Timestamp inserted_at;
     private String url;
@@ -50,10 +47,10 @@ public class Post {
                 Timestamp insertedAt,
                 String url){
         this.id = id;
-        this.client_id = clientId;
-        this.owner_id = ownerId;
+        this.clientId = clientId;
+        this.ownerId = ownerId;
         this.text = text;
-        this.sentiment_value = sentimentValue;
+        this.sentimentValue = sentimentValue;
         this.created_at = createdAt;
         this.inserted_at = insertedAt;
         this.url = url;
@@ -68,20 +65,20 @@ public class Post {
     }
 
     public String getClient_id() {
-        return client_id;
+        return clientId;
     }
 
     public void setClient_id(String client_id) {
-        this.client_id = client_id;
+        this.clientId = client_id;
     }
 
     @JsonIgnore
-    public int getOwner_id() {
-        return owner_id;
+    public int getOwnerId() {
+        return ownerId;
     }
 
-    public void setOwner_id(int owner_id) {
-        this.owner_id = owner_id;
+    public void setOwnerId(int ownerId) {
+        this.ownerId = ownerId;
     }
 
     public String getText() {
@@ -92,12 +89,12 @@ public class Post {
         this.text = text;
     }
 
-    public Float getSentiment_value() {
-        return sentiment_value;
+    public Float getSentimentValue() {
+        return sentimentValue;
     }
 
-    public void setSentiment_value(Float sentiment_value) {
-        this.sentiment_value = sentiment_value;
+    public void setSentimentValue(Float sentimentValue) {
+        this.sentimentValue = sentimentValue;
     }
 
     public Timestamp getCreated_at() {
