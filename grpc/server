@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+/home/ubuntu/grpc/python2.7_virtual_environment/bin/python2.7 tagalyzer_server.py

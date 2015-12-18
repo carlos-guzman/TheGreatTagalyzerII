@@ -1,0 +1,31 @@
+#!/home/ubuntu/grpc/python2.7_virtual_environment/bin/python 
+import sys
+from grpc.beta import implementations
+from grpc.framework.interfaces.face.face import ExpirationError
+
+import tagalyzer_pb2
+
+
+def create(args):
+  client = args[1]
+  post = args[2]
+  created = args[3]
+  channel = implementations.insecure_channel('localhost', 50051)
+  stub = tagalyzer_pb2.beta_create_Tagalyzer_stub(channel)
+  response = None
+
+  try:
+    response = stub.CreatePost(tagalyzer_pb2.PostRequest(client_id=client,text=post,created_at=created), 20)
+  except ExpirationError:
+    print "No comment"
+    sys.exit(0)
+  print response.id
+  
+
+
+if __name__ == "__main__":
+  args = sys.argv
+  if len(args) < 3:
+    print "Usage:\n./moderator <answer|elaborate> question [timeout] [blah_run...]"
+    sys.exit(1)
+  create(args)
