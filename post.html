@@ -10,7 +10,7 @@
     <meta name="author" content="">
     
 
-    <title>The Great Tagalyzer II</title>
+    <title>The Great Tagalyzer II - GET</title>
 
     <!-- Bootstrap core CSS -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
@@ -46,9 +46,9 @@
       <div class="row">
         <div class="col-sm-3 col-md-2 sidebar">
           <ul class="nav nav-sidebar">
-            <li class="active"><a href="index.html">Overview <span class="sr-only">(current)</span></a></li>
-            <li><a href="get.html">Get</a></li>
-            <li><a href="post.html">Post</a></li>
+            <li ><a href="index.html">Overview <span class="sr-only">(current)</span></a></li>
+            <li ><a href="get.html">Get</a></li>
+            <li class="active"><a href="post.html">Post</a></li>
           </ul>
           <ul class="nav nav-sidebar">
             <li><a href="">Data Visualization</a></li>
@@ -59,8 +59,29 @@
           </ul>
         </div>
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-          <h1 class="page-header">The API</h1>
-          <p>The Great Tagalyzer II API helps you record and see the popular tags in your website or app.</p>
+          <h1 class="page-header">GET</h1>
+          <div class="box">
+            <h4>Post Request <a href="#">http://api.tagalyzer.io/posts</a></h4>
+            <h4>Response</h4>
+            <h5>Response is an empty string</h5>
+          </div>
+          <div class="box">
+            <h4>Sample Post</h4>
+            <h4>Javascript </h4>
+            <h6>var myData= {
+    "client_id": "1",
+    "text": "Hello, World! #largescale"
+  };</h6>
+  <h6>var xhr = new XMLHttpRequest();</h6>
+  <h6>xhr.open('POST', 'http://api.tagalyzer.io/posts');</h6>
+  <h6>xhr.setRequestHeader('Content-Type', 'application/json');</h6>
+  <h6>xhr.onreadystatechange = function () {
+    if (xhr.readyState == 4 && xhr.status == 200) {
+        console.log(xhr.responseText);
+    }
+}</h6>
+<h6>xhr.send(JSON.stringify(myData));</h6>
+          </div>
 
           </div>
         </div>

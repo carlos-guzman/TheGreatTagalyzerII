@@ -1,0 +1,6 @@
+api.tagalyzer.io/hashtags/
+
+analysis:
+
+Response:sentiment value
+stats: 

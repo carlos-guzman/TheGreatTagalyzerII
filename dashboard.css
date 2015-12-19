@@ -84,7 +84,19 @@ body {
   margin-top: 0;
 }
 
+.box{
+  background-color: lightgray;
+  width: 80%;
+  border: 1px solid;
+  padding-left: 2%;
+  margin-top: 4%;
 
+
+}
+h6{
+  font-size: 14px;
+  color: blue;
+}
 /*
  * Placeholder dashboard ideas
  */
