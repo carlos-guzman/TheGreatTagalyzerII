@@ -18,7 +18,7 @@ class Tagalyzer(tagalyzer_pb2.BetaTagalyzerServicer):
     tags = self.parse_tags(post)
     
     for t in tags:
-      shard_id = java_string_hashcode(t) % shards
+      shard_id = 1 + java_string_hashcode(t) % shards
       print "Shard id for {}: {0:07d}".format(t, shard_id)
       query = "insert into shard_{0:07d}.hashtags (name) select '{}' where not exists (select id from shard_{0:07d}.hashtags where name='{}') returning id;".format(shard_id, tag, shard_id, tag)
       tag_id = db.execute(query)
