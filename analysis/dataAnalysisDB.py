@@ -29,14 +29,13 @@ def execQuery(query, connection, cursor):
 def getNonAnalyzed(connection, cursor):
     columns = ['id', 'client_id', 'text', 'hashtag_id', 'sentiment_value', 'inserted_at', 'created_at']
 
+    output = open(filename, 'w')
     for n in range(1, shards+1):
         cursor.execute("""SELECT * FROM shard_{0:07d}.posts WHERE sentiment_value IS NULL;""".format(n) )
         rows = cursor.fetchall()
-        file = open(filename, 'w')
         for row in rows:
-            print row
-            file.write(str(row));
-            file.write("\n");
+            output.write(str(row));
+            output.write("\n");
             result = (dict(zip(columns, row)))
 
 #given a post id, extract the post and create a dictionary
@@ -47,10 +46,9 @@ def getValuesByID(postID, connection, cursor):
     cursor.execute("""SELECT * FROM shard_{0:07d}.posts WHERE id = '{i}';""".format(shardID, i=str(postID)) )
     rows = cursor.fetchall()
 
-    file = open(filename, 'w')
+    output = open(filename, 'w')
     for row in rows:
-        print row
-        file.write(str(row));
+        output.write(str(row));
         result = (dict(zip(columns, row)))
 
 def uploadS3():
@@ -94,7 +92,6 @@ def main():
         cursor = DBcon.cursor()
         #getNonAnalyzed(DBcon, cursor)
         #uploadS3()
-
     except psycopg2.DatabaseError, e:
         print 'Error %s' % e
         sys.exit(1)
