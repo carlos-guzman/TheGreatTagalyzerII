@@ -8,8 +8,7 @@ hashtag_ids = []
 def sentimentAnalysis(text):
     return(0,5)
 
-file = open("data.csv", 'r')
-for line in file:
+for line in sys.stdin:
     line = line.strip()
 
     # parse the input we got from mapper.py
