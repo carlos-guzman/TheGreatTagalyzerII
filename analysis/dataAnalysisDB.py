@@ -1,23 +1,14 @@
 import psycopg2, sys, json
-
 import tinys3
+from keys import * #keys contain db/aws credentials
 from boto.s3.connection import S3Connection
-
-#we should hide these later...
-S3_ACCESS_KEY = 'AKIAJAX3BHOTZJ2BBUVQ'
-S3_SECRET_KEY = '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'
-
-dbname = 'tagalyzer'
-dbuser = 'taguser'
-dbhost = 'db.tagalyzer.io'
-dbpass = 'swordfish'
 
 filename = "data.csv"
 
 shards = 4 #shards start from 1 to 4
 
-# doesnt have the times!
-# columns = ['id', 'client_id', 'text', 'owner_id', 'sentiment_value', 'inserted_at', 'created_at']
+#hashtags = [id, name, sentiment_value, last_updated_at]
+#posts = [id, client_id, text, hashtag_id, sentiment_value, inserted_at, created_at]
 
 result = None
 
@@ -39,7 +30,7 @@ def execQuery(query, connection, cursor):
 #ok
 #gets all posts which hasn't been analyzed yet
 def getNonAnalyzed(connection, cursor):
-    columns = ['id', 'client_id', 'text', 'owner_id', 'sentiment_value']
+    columns = ['id', 'client_id', 'text', 'hashtag_id', 'sentiment_value', 'inserted_at', 'created_at']
 
     for n in range(1, shards+1):
         cursor.execute("""SELECT * FROM shard_{0:07d}.posts WHERE sentiment_value IS NULL;""".format(n) )
@@ -51,19 +42,21 @@ def getNonAnalyzed(connection, cursor):
             file.write("\n");
             result = (dict(zip(columns, row)))
 
+#ok
 #given a post id, extract the post and create a dictionary
 def getValuesByID(postID, connection, cursor):
-    columns = ['id', 'client_id', 'text', 'owner_id', 'sentiment_value']
-    print postID
-    print postID % 4 + 1
-    shardID = (postID % shards) + 1
-    cursor.execute("""SELECT * FROM shard_{0:07d}.posts WHERE id = '{i}';""".format(shardID, i=str(postID)) )
-    rows = cursor.fetchall()
+    columns = ['id', 'client_id', 'text', 'hashtag_id', 'sentiment_value', 'inserted_at', 'created_at']
 
-    for row in rows:
-        print row
-        file.write(row);
-        result = (dict(zip(columns, row)))
+    for shardID in range(1,5):
+        cursor.execute("""SELECT * FROM shard_{0:07d}.posts WHERE id = '{i}';""".format(shardID, i=str(postID)) )
+        rows = cursor.fetchall()
+
+        file = open(filename, 'w')
+        for row in rows:
+            print row
+            file.write(str(row));
+            result = (dict(zip(columns, row)))
+
 #ok
 def uploadS3():
     S3conn = tinys3.Connection(S3_ACCESS_KEY,S3_SECRET_KEY,tls=True)
@@ -92,13 +85,24 @@ def java_string_hashcode(s):
         h = (31 * h + ord(c)) & 0xFFFFFFFF
     return ((h + 0x80000000) & 0xFFFFFFFF) - 0x80000000
 
+#for test purposes, remove later
+def printEverything(DBcon, cursor):
+    for i in range(1,5):
+        print i
+        execQuery('select * from shard_{0:07d}.posts'.format(i), DBcon, cursor)
+    print '\n'
+    for i in range(1,5):
+        print i
+        execQuery('select * from shard_{0:07d}.hashtags'.format(i), DBcon, cursor)
+ 
 def main():
     try:
         DBcon = connectIntoDB()
         cursor = DBcon.cursor()
         #updateHashtagSentiment(-0.5, 'asdf', DBcon, cursor)
         tp = "test post from david"
- 
+        #printEverything(DBcon, cursor)
+
         getValuesByID(8589934593L, DBcon, cursor)
         #updatePostSentiment(-0.1, 8589934593L, DBcon, cursor)
         #getNonAnalyzed(DBcon, cursor)
