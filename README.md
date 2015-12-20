@@ -11,8 +11,6 @@ api - Dropwizard Java project that includes the DB migrations. All necessary inf
 
 dashboard - To see it, just open index.html. The dashboard is CNAMEd or redirected from dashboard.tagalyzer.io
 
-dataAnalysis - 
-
 grpc - Ideally the creator code that calls the server RPC would be in the client, or scalica. I had some trouble trying to run scalica successfully so the client just takes the post information as arguments. The server just can be ran with ./server. There is a server running in grpc.tagalyzer.io:50051
 
 scalica - This branch contains the latest scalica. Our changes are not reflected in this version (like adding __init__.py to utils) because it was never working (latest error I remember was some Form Validation or similar) If we get it to work soon, it will be in scalica.tagalyzer.io (my failed attempts are there)
