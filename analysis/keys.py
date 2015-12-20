@@ -1,0 +1,6 @@
+S3_ACCESS_KEY = ''
+S3_SECRET_KEY = ''
+dbname = ''
+dbuser = ''
+dbhost = ''
+dbpass = ''
