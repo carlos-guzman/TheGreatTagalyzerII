@@ -3,13 +3,7 @@ import tinys3
 from keys import * #keys contain db/aws credentials
 from boto.s3.connection import S3Connection
 
-filename = "data.csv"
-
 shards = 4 #shards start from 1 to 4
-
-#hashtags = [id, name, sentiment_value, last_updated_at]
-#posts = [id, client_id, text, hashtag_id, sentiment_value, inserted_at, created_at]
-
 result = None
 
 def connectIntoDB():
@@ -25,8 +19,8 @@ def execQuery(query, connection, cursor):
     for row in rows:
         print(row)
 
-#gets all posts which hasn't been analyzed yet
-def getNonAnalyzed(connection, cursor):
+#gets all posts which hasn't been analyzed yet and write to file
+def getNonAnalyzed(filename, connection, cursor):
     columns = ['id', 'client_id', 'text', 'hashtag_id', 'sentiment_value', 'inserted_at', 'created_at']
 
     output = open(filename, 'w')
@@ -34,9 +28,15 @@ def getNonAnalyzed(connection, cursor):
         cursor.execute("""SELECT * FROM shard_{0:07d}.posts WHERE sentiment_value IS NULL;""".format(n) )
         rows = cursor.fetchall()
         for row in rows:
-            output.write(str(row));
-            output.write("\n");
+            entries = []
+            for entry in row:
+                if isinstance(entry, basestring):
+                    entry = '"'+entry+'"'
+                entries.append(str(entry))
+            output.write(','.join(entries))
+            output.write("\n")
             result = (dict(zip(columns, row)))
+    output.close()
 
 #given a post id, extract the post and create a dictionary
 def getValuesByID(postID, connection, cursor):
@@ -50,11 +50,12 @@ def getValuesByID(postID, connection, cursor):
     for row in rows:
         output.write(str(row));
         result = (dict(zip(columns, row)))
+    output.close()
 
-def uploadS3():
+def uploadS3(filename):
     S3conn = tinys3.Connection(S3_ACCESS_KEY,S3_SECRET_KEY,tls=True)
     f = open(filename,'rb')
-    S3conn.upload(filename,f,'tagalyzer/data')
+    S3conn.upload(filename,f,S3_DIRECTORY)
 
 #update the sentiment value of the post with the given post ID
 def updatePostSentiment(sentimentValue, postID, connection, cursor):
@@ -90,8 +91,8 @@ def main():
     try:
         DBcon = connectIntoDB()
         cursor = DBcon.cursor()
-        #getNonAnalyzed(DBcon, cursor)
-        #uploadS3()
+        #getNonAnalyzed('data.csv', DBcon, cursor)
+        #uploadS3('data.csv')
     except psycopg2.DatabaseError, e:
         print 'Error %s' % e
         sys.exit(1)
