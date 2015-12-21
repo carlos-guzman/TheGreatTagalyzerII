@@ -1,6 +1,7 @@
 from mrjob.job import MRJob
 import csv
-
+from nltk.corpus import wordnet as wn
+from nltk.corpus import sentiwordnet as swn
 import string
 
 #import sentiment
@@ -58,8 +59,6 @@ def cleanPost(post):
 #[0] = positive, [1] = negative, [2] = objectiveness
 #just give 1.0 to objectiveness if word not found
 def sentiValues(word):
-        from nltk.corpus import wordnet as wn
-        from nltk.corpus import sentiwordnet as swn
         code = wn.synsets(word)
         sentiValues = [0, 0, 1]
         if (len(code) > 0):

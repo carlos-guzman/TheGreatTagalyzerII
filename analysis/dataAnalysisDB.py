@@ -91,8 +91,8 @@ def main():
     try:
         DBcon = connectIntoDB()
         cursor = DBcon.cursor()
-        #getNonAnalyzed('data.csv', DBcon, cursor)
-        #uploadS3('data.csv')
+        getNonAnalyzed('data.csv', DBcon, cursor)
+        uploadS3('data.csv')
     except psycopg2.DatabaseError, e:
         print 'Error %s' % e
         sys.exit(1)
